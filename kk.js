@@ -27,15 +27,11 @@ String.prototype.getBytes = function() {
     for (var i = 0; i < this.length; i++) {
         if (this.charCodeAt(i) > 256) {
             bytes += 2;
-
         } else {
             bytes += 1;
-
         }
-
     }
     return bytes;
-
 };
 
 //原则：可以给原生对象的原型添加方法，但是最好不要修改已经存在的对象方法
@@ -52,17 +48,13 @@ String.prototype.intercept = function(length, appendStr) {
     for (var i = 0; i < str.length; i++) {
         if (this.charCodeAt(i) > 256) {
             countLen += 2;
-
         } else {
             countLen += 1;
-
         }
         if (countLen > length) {
             break;
-
         }
         charCount++;
-
     }
     return str.substr(0, charCount) + appendStr;
 
@@ -90,6 +82,8 @@ Array.prototype._removeAt=function(idx)
 	this.splice(idx, 1);
 	return this;
 } ;
+
+//删除指定value的项
 Array.prototype._remove=function(v)
 {
 	var tmp=[];
