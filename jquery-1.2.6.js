@@ -36,13 +36,13 @@ jQuery.fn = jQuery.prototype = {
 		selector = selector || document;
 
 		// Handle $(DOMElement)
-		if ( selector.nodeType ) {
+		if ( selector.nodeType ) {//DOM对象 第1种情况
 			this[0] = selector;
 			this.length = 1;
 			return this;
 		}
 		// Handle HTML strings
-		if ( typeof selector == "string" ) {
+		if ( typeof selector == "string" ) {//字符串
 			// Are we dealing with HTML string or an ID?
 			var match = quickExpr.exec( selector );
 
@@ -50,17 +50,18 @@ jQuery.fn = jQuery.prototype = {
 			if ( match && (match[1] || !context) ) {
 
 				// HANDLE: $(html) -> $(array)
-				if ( match[1] )
+				if ( match[1] )//第2种情况
 					selector = jQuery.clean( [ match[1] ], context );
 
 				// HANDLE: $("#id")
-				else {
-					var elem = document.getElementById( match[3] );
+				else {//第3种情况
+					var elem = document.getElementById( match[3] );//类似jQuery("#btn")
 
 					// Make sure an element was located
 					if ( elem ){
 						// Handle the case where IE and Opera return items
 						// by name instead of ID
+						//IE通过document.getElementById也会返回name=id的元素，没有id也能返回真
 						if ( elem.id != match[3] )
 							return jQuery().find( selector );
 
@@ -72,12 +73,12 @@ jQuery.fn = jQuery.prototype = {
 
 			// HANDLE: $(expr, [context])
 			// (which is just equivalent to: $(content).find(expr)
-			} else
+			} else//第4种情况
 				return jQuery( context ).find( selector );
 
 		// HANDLE: $(function)
 		// Shortcut for document ready
-		} else if ( jQuery.isFunction( selector ) )
+		} else if ( jQuery.isFunction( selector ) )//函数
 			return jQuery( document )[ jQuery.fn.ready ? "ready" : "load" ]( selector );
 
 		return this.setArray(jQuery.makeArray(selector));
@@ -108,6 +109,12 @@ jQuery.fn = jQuery.prototype = {
 
 	// Take an array of elements and push it onto the stack
 	// (returning the new matched element set)
+	/*
+	setArray(elems)只会改变当前jQuery对象的集合，它会清除这个对象之前的元素，
+	但是有的时候我们想保存原来的集合中元素，pushStack函数新建一个jQuery对象同时
+	保存原来对象的引用。
+
+	*/
 	pushStack: function( elems ) {
 		// Build a new jQuery matched element set
 		var ret = jQuery( elems );
@@ -125,7 +132,8 @@ jQuery.fn = jQuery.prototype = {
 	setArray: function( elems ) {
 		// Resetting the length to 0, then using the native Array push
 		// is a super-fast way to populate an object with array-like properties
-		this.length = 0;
+		this.length = 0;//初始化长度，push 会在原始的length+1
+		//把array-like对象的元素全部push到当前的jquery对象
 		Array.prototype.push.apply( this, elems );
 
 		return this;
@@ -134,7 +142,7 @@ jQuery.fn = jQuery.prototype = {
 	// Execute a callback for every element in the matched set.
 	// (You can seed the arguments with an array of args, but this is
 	// only used internally.)
-	each: function( callback, args ) {
+	each: function( callback, args ) {//间接调用jQuery静态方法jQuery.each
 		return jQuery.each( this, callback, args );
 	},
 
@@ -1132,8 +1140,9 @@ jQuery.extend({
 		if( array != null ){
 			var i = array.length;
 			//the window, strings and functions also have 'length'
+			//如果参数的length属性为空，或者参数是字符串、window对象、函数
 			if( i == null || array.split || array.setInterval || array.call )
-				ret[0] = array;
+				ret[0] = array;//入栈，变成只含有1个项的数组
 			else
 				while( i )
 					ret[--i] = array[i];
