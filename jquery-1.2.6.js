@@ -73,7 +73,7 @@ jQuery.fn = jQuery.prototype = {
 
 			// HANDLE: $(expr, [context])
 			// (which is just equivalent to: $(content).find(expr)
-			} else//第4种情况
+			} else//第4种情况  css表达式查询
 				return jQuery( context ).find( selector );
 
 		// HANDLE: $(function)
