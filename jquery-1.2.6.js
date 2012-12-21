@@ -78,7 +78,7 @@ jQuery.fn = jQuery.prototype = {
 
 		// HANDLE: $(function)
 		// Shortcut for document ready
-		} else if ( jQuery.isFunction( selector ) )//函数
+		} else if ( jQuery.isFunction( selector ) )//第5种情况 函数
 			return jQuery( document )[ jQuery.fn.ready ? "ready" : "load" ]( selector );
 
 		return this.setArray(jQuery.makeArray(selector));
