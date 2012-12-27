@@ -101,7 +101,7 @@ jQuery.fn = jQuery.prototype = {
 		return num == undefined ?
 
 			// Return a 'clean' array
-			jQuery.makeArray( this ) :
+			jQuery.makeArray( this ) ://如果没有参数，返回dom的数组(原理:elems[i]//=>get(i))
 
 			// Return just the object
 			this[ num ];
@@ -148,13 +148,13 @@ jQuery.fn = jQuery.prototype = {
 
 	// Determine the position of an element within
 	// the matched set of elements
-	index: function( elem ) {
+	index: function( elem ) {//找到elem的索引号
 		var ret = -1;
 
 		// Locate the position of the desired element
 		return jQuery.inArray(
 			// If it receives a jQuery object, the first element is used
-			elem && elem.jquery ? elem[0] : elem
+			elem && elem.jquery ? elem[0] : elem//elem[0]相当于elem.get(0)
 		, this );
 	},
 
@@ -163,8 +163,9 @@ jQuery.fn = jQuery.prototype = {
 
 		// Look for the case where we're accessing a style value
 		if ( name.constructor == String )
-			if ( value === undefined )
-				return this[0] && jQuery[ type || "attr" ]( this[0], name );
+			if ( value === undefined )//取值
+				// return  a && b 的用法：  1, a真 返回b  2，a假，返回a
+ 				return this[0] && jQuery[ type || "attr" ]( this[0], name );//返回第1个元素的属性
 
 			else {
 				options = {};
@@ -1151,10 +1152,10 @@ jQuery.extend({
 		return ret;
 	},
 
-	inArray: function( elem, array ) {
+	inArray: function( elem, array ) {//普通遍历
 		for ( var i = 0, length = array.length; i < length; i++ )
 		// Use === because on IE, window == document
-			if ( array[ i ] === elem )
+			if ( array[ i ] === elem )//用的是===恒等于
 				return i;
 
 		return -1;
