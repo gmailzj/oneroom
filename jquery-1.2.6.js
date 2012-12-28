@@ -763,6 +763,7 @@ jQuery.extend({
 			value = value.call( elem, i );
 
 		// Handle passing in a number to a CSS property
+		//exclude = z-?index|font-?weight|opacity|zoom|line-?height
 		return value && value.constructor == Number && type == "curCSS" && !exclude.test( name ) ?
 			value + "px" :
 			value;
@@ -1044,14 +1045,15 @@ jQuery.extend({
 		return ret;
 	},
 
-	attr: function( elem, name, value ) {
+	attr: function( elem, name, value ) {//jQuery.attr的静态方法
 		// don't set attributes on text and comment nodes
+		//不在文本节点和注释节点设置属性
 		if (!elem || elem.nodeType == 3 || elem.nodeType == 8)
 			return undefined;
 
-		var notxml = !jQuery.isXMLDoc( elem ),
+		var notxml = !jQuery.isXMLDoc( elem ),//是否是XMLDoc
 			// Whether we are setting (or getting)
-			set = value !== undefined,
+			set = value !== undefined,//是赋值还是取值
 			msie = jQuery.browser.msie;
 
 		// Try to normalize/fix the name
