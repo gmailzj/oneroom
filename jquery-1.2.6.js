@@ -33,7 +33,7 @@ var quickExpr = /^[^<]*(<(.|\s)+>)[^>]*$|^#(\w+)$/,
 jQuery.fn = jQuery.prototype = {
 	init: function( selector, context ) {
 		// Make sure that a selection was provided
-		selector = selector || document;
+		selector = selector || document;//如果没有参数，默认取document
 
 		// Handle $(DOMElement)
 		if ( selector.nodeType ) {//DOM对象 第1种情况
@@ -50,7 +50,7 @@ jQuery.fn = jQuery.prototype = {
 			if ( match && (match[1] || !context) ) {
 
 				// HANDLE: $(html) -> $(array)
-				if ( match[1] )//第2种情况
+				if ( match[1] )//第2种情况 $("<div>1</div>")
 					selector = jQuery.clean( [ match[1] ], context );
 
 				// HANDLE: $("#id")
@@ -81,7 +81,7 @@ jQuery.fn = jQuery.prototype = {
 		} else if ( jQuery.isFunction( selector ) )//第5种情况 函数
 			return jQuery( document )[ jQuery.fn.ready ? "ready" : "load" ]( selector );
 
-		return this.setArray(jQuery.makeArray(selector));
+		return this.setArray(jQuery.makeArray(selector));//先变成伪数组，然后变成数组
 	},
 
 	// The current version of jQuery being used
@@ -150,11 +150,10 @@ jQuery.fn = jQuery.prototype = {
 	// the matched set of elements
 	index: function( elem ) {//找到elem的索引号
 		var ret = -1;
-
 		// Locate the position of the desired element
 		return jQuery.inArray(
 			// If it receives a jQuery object, the first element is used
-			elem && elem.jquery ? elem[0] : elem//elem[0]相当于elem.get(0)
+			elem && elem.jquery ? elem[0] : elem//elem[0]相当于elem.get(0)，如果是jQuery对象，就取第1个并转化成dom
 		, this );
 	},
 
@@ -163,7 +162,7 @@ jQuery.fn = jQuery.prototype = {
 
 		// Look for the case where we're accessing a style value
 		if ( name.constructor == String )
-			if ( value === undefined )//取值
+			if ( value === undefined )//取值一般取第1个元素
 				// return  a && b 的用法：  1, a真 返回b  2，a假，返回a
  				return this[0] && jQuery[ type || "attr" ]( this[0], name );//返回第1个元素的属性
 
@@ -173,14 +172,14 @@ jQuery.fn = jQuery.prototype = {
 			}
 
 		// Check to see if we're setting style values
-		return this.each(function(i){
+		return this.each(function(i){//赋值的时候一般可以多个，通过each
 			// Set all the styles
 			for ( name in options )
 				jQuery.attr(
 					type ?
 						this.style :
 						this,
-					name, jQuery.prop( this, options[ name ], type, i, name )
+					name, jQuery.prop( this, options[ name ], type, i, name )//#759
 				);
 		});
 	},
