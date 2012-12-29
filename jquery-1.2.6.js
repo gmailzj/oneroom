@@ -656,7 +656,7 @@ jQuery.extend({
 		}
 	},
 
-	nodeName: function( elem, name ) {
+	nodeName: function( elem, name ) {//元素节点的标签名是否和name相等
 		return elem.nodeName && elem.nodeName.toUpperCase() == name.toUpperCase();
 	},
 
@@ -1050,12 +1050,13 @@ jQuery.extend({
 		if (!elem || elem.nodeType == 3 || elem.nodeType == 8)
 			return undefined;
 
-		var notxml = !jQuery.isXMLDoc( elem ),//是否是XMLDoc
+		var notxml = !jQuery.isXMLDoc( elem ),//是否是XMLDoc #631
 			// Whether we are setting (or getting)
 			set = value !== undefined,//是赋值还是取值
-			msie = jQuery.browser.msie;
+			msie = jQuery.browser.msie;//是否是IE
 
 		// Try to normalize/fix the name
+		//修正特殊属性比如'for'=>'htmlfor'
 		name = notxml && jQuery.props[ name ] || name;
 
 		// Only do all the following if this is a node (faster for style)
@@ -1063,12 +1064,13 @@ jQuery.extend({
 		if ( elem.tagName ) {
 
 			// These attributes require special treatment
+			// 特殊处理
 			var special = /href|src|style/.test( name );
 
 			// Safari mis-reports the default selected property of a hidden option
 			// Accessing the parent's selectedIndex property fixes it
 			if ( name == "selected" && jQuery.browser.safari )
-				elem.parentNode.selectedIndex;
+				elem.parentNode.selectedIndex;//?
 
 			// If applicable, access the attribute via the DOM 0 way
 			if ( name in elem && notxml && !special ) {
@@ -1087,12 +1089,13 @@ jQuery.extend({
 				return elem[ name ];
 			}
 
+			//如果是ie,而且是设置样式
 			if ( msie && notxml &&  name == "style" )
 				return jQuery.attr( elem.style, "cssText", value );
 
 			if ( set )
 				// convert the value to a string (all browsers do this but IE) see #1070
-				elem.setAttribute( name, "" + value );
+				elem.setAttribute( name, "" + value );//转换成字符串
 
 			var attr = msie && notxml && special
 					// Some attributes require a special call on IE
