@@ -1,0 +1,435 @@
+jQuery 是一款开源的，最流行的，面向对象的Javascript框架，因为平时经常使用，也就萌生了阅读源码的想法，尝试着去分析一下，如果有问题，还请大家指点。
+
+阅读 jQuery 源码之前，必须要了解 jQuery 的工作机制，在我看来，实际上 jQuery 是一个标准的以面向对象的程序结构，jQuery 本身是一个类，而每一个我们构建的 jQuery 对象则是这个类实例。
+
+因此我从如下两个方法来入手
+1、如何构造 jQuery 对象
+2、jQuery对象的继承
+
+1、如何构造 jQuery 对象
+jQuery 提供了四种封装jQuery对象的方法，分别是
+
+DOMElement
+HTML strings
+TAG
+expr, $(…)
+这四种方法的调用如下。
+
+elem = document.getElementsByTagName("div");
+elem = $(elem);
+var elem = $("<p>hello</p>");
+var elem = $("div");
+var elem = $("body > div");
+通过这些方法，就生成一个jQuery对象。
+
+那么，在jQuery内部，是如何去封装这个对象的呢？
+看代码
+
+var jQuery = function( selector, context ) {
+                // 创建一个自定义对象，并返回
+                return new jQuery.fn.init( selector, context );
+        }
+不难理解，jQuery 对象实际上通过new运算符创建的一个继承jQuery.prototype.init()返回的对象的原型的对象。
+
+让我们简化jQuery.fn.init方法，并看看他是如何去运作的
+
+jQuery.fn = jQuery.prototype = {
+        init: function( selector, context ) {
+                var match, elem, ret, doc;
+ 
+                // 如果选择器为空、null、undefined的时候，返回 jQuery对象
+                if ( !selector ) {
+                        return this;
+                }
+ 
+                // Handle $(DOMElement)
+                if ( selector.nodeType ) {
+                        // 如果选择器为DOM对象，写入jQuery属性并返回jQuery对象
+                        this.context = this[0] = selector;
+                        this.length = 1;
+                        return this;
+                }
+ 
+                // The body element only exists once, optimize finding it
+                if ( selector === "body" && !context ) {
+                        //code here...
+                        return this;
+                }
+ 
+                // Handle HTML strings
+                if ( typeof selector === "string" ) {
+                // 通过正则判断传入的选择器是HTML字符串还是ID
+                        // Are we dealing with HTML string or an ID?
+                        // quickExpr = /^[^< ]*(<[\w\W]+>)[^>]*$|^#([\w-]+)$/,
+ 
+                        match = quickExpr.exec( selector );
+ 
+                        // 如果match[1]不为空或者context为空的时候
+                        if ( match && (match[1] || !context) ) {
+ 
+                                // HANDLE: $(html) -> $(array)
+                                // 如果match[1] 不为空（html字符串）
+                                if ( match[1] ) {
+                                        // 返回jQuery、选择器两数组合并后的对象
+                                        return jQuery.merge( this, selector );
+ 
+                                // HANDLE: $("#id")
+                                // 如果context为空的时候 （id）
+                                } else {
+                                        // 尝试按照DOM节点的方式返回jQuery对象
+                                        elem = document.getElementById( match[2] );
+ 
+                                        if ( elem ) {
+                                                // 如果得到elem对象，但id非match[2]
+                                                if ( elem.id !== match[2] ) {
+                                                        return rootjQuery.find( selector );
+                                                }
+ 
+                                                // Otherwise, we inject the element directly into the jQuery object
+                                                this.length = 1;
+                                                this[0] = elem;
+                                        }
+ 
+                                        this.context = document;
+                                        this.selector = selector;
+                                        return this;
+                                }
+ 
+ 
+                        // HANDLE: $("TAG")
+                        // 如果context为空并且是一个纯字母的字符串
+                        } else if ( !context && /^\w+$/.test( selector ) ) {
+                                // 返回jQuery、选择器两数组合并后的对象
+                                return jQuery.merge( this, selector );
+ 
+                        // HANDLE: $(expr, $(...))
+                        // 如果context为空 或者 context是一个jQuery对象
+                        } else if ( !context || context.jquery ) {
+                                // 在上下文或者document对象中找到节点并返回jQuery对象
+                                return (context || rootjQuery).find( selector );
+ 
+                        // HANDLE: $(expr, context)
+                        // (which is just equivalent to: $(context).find(expr)
+                        } else {
+                                return jQuery( context ).find( selector );
+                        }
+ 
+                // HANDLE: $(function)
+                // Shortcut for document ready
+                // 对$(document).ready(functon(){});的一个缩写$(function(){});
+                } else if ( jQuery.isFunction( selector ) ) {
+                        return rootjQuery.ready( selector );
+                }
+ 
+                // 如果选择器是一个jQuery对象，引用下
+                if (selector.selector !== undefined) {
+                        this.selector = selector.selector;
+                        this.context = selector.context;
+                }
+ 
+                return jQuery.makeArray( selector, this );
+ 
+        }
+}
+至此，我们就完成了对jQuery对象的构造。
+
+2、jQuery对象的继承
+当我们构造完成jQuery对象后，需要jQuery对象继承jQuery中的方法与属性。
+看代码
+
+jQuery.fn.init.prototype = jQuery.fn;
+如此，就将jQuery的原型赋到jQuery对象的原型上去了，jQuery对象就继承了jQuery初始的方法和属性。
+
+那么，当我需要向已实例化的对象原型中增加方法或者属性怎么办？
+
+这就需要用到扩展方法 –> extend
+上文我们提到了jQuery框架中的一个重要功能，扩展方法。
+
+当我们使用new运算法实例化一个对象后，是如何对这个实例的原型再扩展方法的，因为这个实例的原型实际上是他类的原型的引用。（不知道这儿理解的是否正确）
+
+因此当我们试图向实例化对象的原型中增加方法或者属性都是不行的。
+
+function car(){}
+ 
+car.prototype = {
+    name: function(name){
+        return name;
+    }
+}
+ 
+var jeep = new car();
+jeep.prototype = {
+    type: "jeep"
+}
+ 
+alert(jeep.name("aodi")); //aodi
+alert(jeep.type); //undefined
+那么当我们需要扩展jQuery对象或者jQuery中的时候怎么办？
+
+使用 jQuery.fn.extedn()、jQuery.extend()方法。
+
+1、扩展jQuery静态方法
+
+jQuery.extend({
+  max: function(a, b) { return a > b ? a : b; }
+});
+ 
+jQuery.max(5,4) //5
+2、给jQuery对象扩展方法
+
+jQuery.fn.extend({
+  max: function(a, b) { return a > b ? a : b; }
+});
+ 
+$(elem).max(5,4) //5
+3、合并多个对象
+
+var object1 = {
+  apple: { value1:1,value2:2}
+};
+var object2 = {
+  apple: { value1:3}
+};
+$.extend(object1, object2);
+ 
+// object1 === {apple: { value1:3}}
+4、深度合并多个对象
+
+var object1 = {
+  apple: { value1:1,value2:2}
+};
+var object2 = {
+  apple: { value1:3}
+};
+$.extend(true, object1, object2);
+ 
+// object1 === {apple: { value1:3,value2:2}}
+那么extend方法是如何实现这种扩展的呢？看代码。
+
+jQuery.extend = jQuery.fn.extend = function() {
+        // copy reference to target object
+        // 在这里我们约定被扩展的对象（object1）叫目标对象，其他被合并的对象（objectN）叫合并对象
+        var target = arguments[0] || {}, i = 1, length = arguments.length, deep = false, options, name, src, copy;
+ 
+        // 当使用深度扩展的时候
+        if ( typeof target === "boolean" ) {
+                deep = target;
+                target = arguments[1] || {};
+                i = 2;
+        }
+ 
+        // 当目标对象不是一个对象的时候，建立一个空的对象
+        if ( typeof target !== "object" && !jQuery.isFunction(target) ) {
+                target = {};
+        }
+ 
+        // 当没有合并对象的时候，则扩展this本身（jQuery，或者jQuery对象）
+        if ( length === i ) {
+                target = this;
+                // 为后面的扩展做处理
+                --i;
+        }
+ 
+        for ( ; i < length; i++ ) {
+                // 当合并对象不为null的情况下，将合并对象赋值给options变量
+                if ( (options = arguments[ i ]) != null ) {
+                        // 遍历合并对象
+                        for ( name in options ) {
+                                src = target[ name ];
+                                copy = options[ name ];
+ 
+                                // 如果两个方法或属性相同，跳出本次循环
+                                if ( target === copy ) {
+                                        continue;
+                                }
+ 
+                                // 当使用深度扩展并且合并对象中的属性或者方法是一个字面量或数组（真复杂....）
+                                if ( deep && copy && ( jQuery.isPlainObject(copy) || jQuery.isArray(copy) ) ) {
+                                        // 如果目标对象中存在对应的属性或方法，并且是一个对象字面量或数组，则克隆它
+                                        // 反之（不存在），则判断合并对象的属性或方法的类型，并依次类型建立对应的对象/数组字面量
+                                        var clone = src && ( jQuery.isPlainObject(src) || jQuery.isArray(src) ) ? src
+                                                : jQuery.isArray(copy) ? [] : {};
+ 
+                                        // 再扩展这个克隆，并将这个克隆赋给目标对象的属性或者方法中
+                                        target[ name ] = jQuery.extend( deep, clone, copy );
+ 
+                                // 当没有使用深度扩展并且合并对象中仍然存在没有合并的方法或属性时
+                                } else if ( copy !== undefined ) {
+                                        // 扩展目标对象
+                                        target[ name ] = copy;
+                                }
+                        }
+                }
+        }
+ 
+        // 返回目标对象
+        return target;
+};
+需要注意的是，这是jQuery中的一个静态方法，也是一个实例方法。
+
+jQuery.extend = jQuery.prototype.extend = function() {}
+至此，一个面向对象的js框架基础就搭建好了，下一步，我们将向这个对象中扩展各种不同的方法~
+
+上次我们分析了jQuery对象的构建方法以及如何去扩展jQuery对象的方法extend()。
+
+这次让我们先看看jQuery本身还有那些静态属性和方法实例方法。
+
+需要注意的是，这里定义的所有jQuery的静态属性/方法实例方法也是是jQuery对象的静态属性/方法实例方法。
+
+jQuery.fn = jQuery.prototype = {
+        init: function( selector, context ) {
+                // code here ...
+        },
+ 
+        // 为所有jQuery对象初始化一个空的选择器
+        selector: "",
+ 
+        // The current version of jQuery being used
+        jquery: "1.4.2",
+ 
+        // 初始化 jQuery 对象长度（jQuery含有多少个DOM对象，长度就是几）
+        length: 0,
+ 
+        // 获取jQuery.length属性的方法
+        size: function() {
+                return this.length;
+        },
+ 
+        // 将this对象转为数组
+        //注意，这里的slice方法并不是Array.slice()，而是jQuery.slice()
+        toArray: function() {
+                return slice.call( this, 0 );
+        },
+ 
+        // Get the Nth element in the matched element set OR
+        // Get the whole matched element set as a clean array
+        // 取得匹配DOM对象的集合，或者根据传入的参获取对应的DOM对象
+        get: function( num ) {
+                return num == null ?
+ 
+                        // Return a 'clean' array
+                        this.toArray() :
+ 
+                        // Return just the object
+                        ( num < 0 ? this.slice(num)[ 0 ] : this[ num ] );
+        },
+ 
+        // Take an array of elements and push it onto the stack
+        // (returning the new matched element set)
+        // 将一个数组或者对象压入栈中，同时返回一个新的对象集合
+        // 这是一个非常巧妙的方法，在后面，我们会看到
+        // jQuery利用这个方法来筛选、查找上一个，下一个对象
+        pushStack: function( elems, name, selector ) {
+                // Build a new jQuery matched element set
+                // 新建一个jQuery对象
+                var ret = jQuery();
+ 
+                // 如果传入的对象是数组
+                // 则调用Array.push方法 (jQuery.push只是Array.push的一个引用)
+                // 如果是对象，则合并且返回一个新的jQuery对象
+                if ( jQuery.isArray( elems ) ) {
+                        push.apply( ret, elems );
+                } else {
+                        jQuery.merge( ret, elems );
+                }
+ 
+                // Add the old object onto the stack (as a reference)
+                // 将当前调用的对象（this），作为新jQuery对象的前一个对象
+                ret.prevObject = this;
+ 
+                // 将当前调用的对象（this）的文档集、DOM对象集
+                // 或者jQuery对象赋给新的jQuery对象
+                ret.context = this.context;
+ 
+                if ( name === "find" ) {
+                        // 如果name是find方法，构建一个子查询器（Sizzle）
+                        ret.selector = this.selector + (this.selector ? " " : "") + selector;
+                } else if ( name ) {
+                        // 如果name是其他方法，则调用其他方法
+                        ret.selector = this.selector + "." + name + "(" + selector + ")";
+                }
+ 
+                // 返回这个新的jQuery对象
+                return ret;
+        },
+ 
+        // Execute a callback for every element in the matched set.
+        // (You can seed the arguments with an array of args, but this is
+        // only used internally.)
+        // 后面再说each方法
+        each: function( callback, args ) {
+                return jQuery.each( this, callback, args );
+        },
+ 
+        // 判断jQuery是否载入完毕
+        ready: function( fn ) {
+                // Attach the listeners
+                // 调用bindReady方法，建立一个侦听
+                jQuery.bindReady();
+ 
+                // If the DOM is already ready
+                // 如果DOM已经渲染完成
+                if ( jQuery.isReady ) {
+                        // Execute the function immediately
+                        // 执行fn，并且将jQuery作为参数传入fn中
+                        // 实际上，$(function(){...})内的fn是一个存在于window/document对象下匿名函数
+                        // 传入jQuery后，我们可以将它看作
+                        // (function (jQuery){ ... })(jQuery);
+                        fn.call( document, jQuery );
+ 
+                // Otherwise, remember the function for later
+                // 如果没有准备好，则将要执行的函数放到readyList数组中暂存
+                } else if ( readyList ) {
+                        // Add the function to the wait list
+                        readyList.push( fn );
+                }
+ 
+                return this;
+        },
+ 
+        // 调用jQuery.slice方法取对用dom元素
+        eq: function( i ) {
+                return i === -1 ?
+                        this.slice( i ) :
+                        this.slice( i, +i + 1 );
+        },
+ 
+        // 获取对象中的第一个dom元素
+        first: function() {
+                return this.eq( 0 );
+        },
+ 
+        // 获取对象中的最后一个dom元素
+        last: function() {
+                return this.eq( -1 );
+        },
+ 
+        // 将函数实参转为数组
+        slice: function() {
+                return this.pushStack( slice.apply( this, arguments ),
+                        "slice", slice.call(arguments).join(",") );
+        },
+ 
+        // 将当前jQuery对象中的每一个元素作为参数放入callback中执行，然后返回执行后的新数组
+        map: function( callback ) {
+                return this.pushStack( jQuery.map(this, function( elem, i ) {
+                        return callback.call( elem, i, elem );
+                }));
+        },
+ 
+        // 返回当前调用对象之前的对象，注意pushStack()
+        end: function() {
+                return this.prevObject || jQuery(null);
+        },
+ 
+        // For internal use only.
+        // Behaves like an Array's method, not like a jQuery method.
+        push: push,
+        sort: [].sort,
+        splice: [].splice
+};
+现在jQuery中主要的实例方法已经分析完毕~
+
+同时，最重要的静态方法extend也已经说明
+
+下次将从api入手，依照Core Event Manipulation Ajax这四类来尝试分析
