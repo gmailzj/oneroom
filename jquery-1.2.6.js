@@ -1061,7 +1061,7 @@ jQuery.extend({
 
 		// Only do all the following if this is a node (faster for style)
 		// IE elem.getAttribute passes even for style
-		if ( elem.tagName ) {
+		if ( elem.tagName ) {//必须是元素节点
 
 			// These attributes require special treatment
 			// 特殊处理
@@ -1076,13 +1076,16 @@ jQuery.extend({
 			if ( name in elem && notxml && !special ) {
 				if ( set ){
 					// We can't allow the type property to be changed (since it causes problems in IE)
+					//如果设置的属性是type 而且是input元素的话，会出错
+					//parentElement 和 parentNode一样,但parentNode是W3C标准的parentElement 只在IE中可用. 
 					if ( name == "type" && jQuery.nodeName( elem, "input" ) && elem.parentNode )
 						throw "type property can't be changed";
 
-					elem[ name ] = value;
+					elem[ name ] = value;//赋值
 				}
 
 				// browsers index elements by id/name on forms, give priority to attributes.
+				//如果元素是form。同时又存在name属性，直接返回(赋值也无效)
 				if( jQuery.nodeName( elem, "form" ) && elem.getAttributeNode(name) )
 					return elem.getAttributeNode( name ).nodeValue;
 
@@ -1093,23 +1096,24 @@ jQuery.extend({
 			if ( msie && notxml &&  name == "style" )
 				return jQuery.attr( elem.style, "cssText", value );
 
-			if ( set )
+			if ( set )//如果是赋值
 				// convert the value to a string (all browsers do this but IE) see #1070
 				elem.setAttribute( name, "" + value );//转换成字符串
 
 			var attr = msie && notxml && special
 					// Some attributes require a special call on IE
+					//src和href在IE6/7中(返回绝对路径)想要与其它浏览器保持一致的话(返回相对路径)，可以给getAttribute的第二个参数设为2
 					? elem.getAttribute( name, 2 )
 					: elem.getAttribute( name );
 
 			// Non-existent attributes return null, we normalize to undefined
-			return attr === null ? undefined : attr;
+			return attr === null ? undefined : attr;//如果为null，返回undefined，否则返回属性值
 		}
 
 		// elem is actually elem.style ... set the style
 
 		// IE uses filters for opacity
-		if ( msie && name == "opacity" ) {
+		if ( msie && name == "opacity" ) {// 
 			if ( set ) {
 				// IE has trouble with opacity if it does not have layout
 				// Force it by setting the zoom level
@@ -1125,17 +1129,18 @@ jQuery.extend({
 				"";
 		}
 
+		//absolute-size 转换为 fontSize； 
 		name = name.replace(/-([a-z])/ig, function(all, letter){
 			return letter.toUpperCase();
 		});
 
-		if ( set )
+		if ( set )//如果是赋值
 			elem[ name ] = value;
 
-		return elem[ name ];
+		return elem[ name ];//取值
 	},
 
-	trim: function( text ) {
+	trim: function( text ) {//去空
 		return (text || "").replace( /^\s+|\s+$/g, "" );
 	},
 
