@@ -81,7 +81,7 @@ jQuery.fn = jQuery.prototype = {
 		} else if ( jQuery.isFunction( selector ) )//第5种情况 函数
 			return jQuery( document )[ jQuery.fn.ready ? "ready" : "load" ]( selector );
 
-		return this.setArray(jQuery.makeArray(selector));//先变成伪数组，然后变成数组
+		return this.setArray(jQuery.makeArray(selector));//先变成伪数组(循环取值)，然后变成数组(通过Array.prototype.push.call或者apply)
 	},
 
 	// The current version of jQuery being used
@@ -93,7 +93,7 @@ jQuery.fn = jQuery.prototype = {
 	},
 
 	// The number of elements contained in the matched element set
-	length: 0,
+	length: 0,//初始化元素长度
 
 	// Get the Nth element in the matched element set OR
 	// Get the whole matched element set as a clean array
@@ -101,7 +101,7 @@ jQuery.fn = jQuery.prototype = {
 		return num == undefined ?
 
 			// Return a 'clean' array
-			jQuery.makeArray( this ) ://如果没有参数，返回dom的数组(原理:elems[i]//=>get(i))
+			jQuery.makeArray( this ) ://如果没有参数，返回所有dom的数组(原理:elems[i]=>elems.get(i))
 
 			// Return just the object
 			this[ num ];
@@ -129,7 +129,7 @@ jQuery.fn = jQuery.prototype = {
 	// Force the current matched set of elements to become
 	// the specified array of elements (destroying the stack in the process)
 	// You should use pushStack() in order to do this, but maintain the stack
-	setArray: function( elems ) {
+	setArray: function( elems ) {//转化成真数组
 		// Resetting the length to 0, then using the native Array push
 		// is a super-fast way to populate an object with array-like properties
 		this.length = 0;//初始化长度，push 会在原始的length+1
@@ -161,7 +161,7 @@ jQuery.fn = jQuery.prototype = {
 		var options = name;
 
 		// Look for the case where we're accessing a style value
-		if ( name.constructor == String )
+		if ( name.constructor == String )//字符串
 			if ( value === undefined )//取值一般取第1个元素
 				// return  a && b 的用法：  1, a真 返回b  2，a假，返回a
  				return this[0] && jQuery[ type || "attr" ]( this[0], name );//返回第1个元素的属性
@@ -186,6 +186,7 @@ jQuery.fn = jQuery.prototype = {
 
 	css: function( key, value ) {
 		// ignore negative width and height values
+		//忽略不合法的宽度和高度的赋值操作
 		if ( (key == 'width' || key == 'height') && parseFloat(value) < 0 )
 			value = undefined;
 		return this.attr( key, value, "curCSS" );
@@ -240,7 +241,7 @@ jQuery.fn = jQuery.prototype = {
 		});
 	},
 
-	append: function() {
+	append: function() {//
 		return this.domManip(arguments, true, false, function(elem){
 			if (this.nodeType == 1)
 				this.appendChild( elem );
@@ -464,35 +465,35 @@ jQuery.fn = jQuery.prototype = {
 	},
 
 	andSelf: function() {
-		return this.add( this.prevObject );
+		return this.add( this.prevObject );//将之前的引用对象加入到当前的集合中
 	},
 
-	data: function( key, value ){
+	data: function( key, value ){//实例方法
 		var parts = key.split(".");
 		parts[1] = parts[1] ? "." + parts[1] : "";
 
-		if ( value === undefined ) {
+		if ( value === undefined ) {//取值，取第1个
 			var data = this.triggerHandler("getData" + parts[1] + "!", [parts[0]]);
 
 			if ( data === undefined && this.length )
-				data = jQuery.data( this[0], key );
+				data = jQuery.data( this[0], key );//只返回第1个元素的值，静态方法
 
 			return data === undefined && parts[1] ?
-				this.data( parts[0] ) :
+				this.data( parts[0] ) ://实例方法
 				data;
-		} else
+		} else//赋值，多个
 			return this.trigger("setData" + parts[1] + "!", [parts[0], value]).each(function(){
 				jQuery.data( this, key, value );
 			});
 	},
 
-	removeData: function( key ){
+	removeData: function( key ){//遍历取出数据缓存key
 		return this.each(function(){
 			jQuery.removeData( this, key );
 		});
 	},
 
-	domManip: function( args, table, reverse, callback ) {
+	domManip: function( args, table, reverse, callback ) {//clean
 		var clone = this.length > 1, elems;// clone为bool值
 
 		return this.each(function(){
@@ -534,7 +535,9 @@ jQuery.fn = jQuery.prototype = {
 };
 
 // Give the init function the jQuery prototype for later instantiation
-jQuery.fn.init.prototype = jQuery.fn;
+//jQuery.fn = jQuery.prototype
+//jQuery对象其实就是jQuery.fn.init对象；jQuery.fn.init.prototype挂载着jQuery对象的操作方法
+jQuery.fn.init.prototype = jQuery.fn;//jQuery对象原型绑定
 
 function evalScript( i, elem ) {
 	if ( elem.src )
@@ -555,6 +558,7 @@ function now(){
 	return +new Date;
 }
 
+//重要的函数 
 jQuery.extend = jQuery.fn.extend = function() {
 	// copy reference to target object
 	var target = arguments[0] || {}, i = 1, length = arguments.length, deep = false, options;
@@ -611,6 +615,8 @@ var expando = "jQuery" + now(), uuid = 0, windowData = {},
 	// cache defaultView
 	defaultView = document.defaultView || {};
 
+
+//拓展jQuery静态函数
 jQuery.extend({
 	noConflict: function( deep ) {
 		window.$ = _$;
@@ -624,7 +630,7 @@ jQuery.extend({
 	// See test/unit/core.js for details concerning this function.
 	isFunction: function( fn ) {
 		return !!fn && typeof fn != "string" && !fn.nodeName &&
-			fn.constructor != Array && /^[\s[]?function/.test( fn + "" );
+			fn.constructor != Array && /^[\s[]?function/.test( fn + "" );//转换成字符串
 	},
 
 	// check if an element is in a (or is an) XML document
@@ -634,7 +640,7 @@ jQuery.extend({
 	},
 
 	// Evalulates a script in a global context
-	globalEval: function( data ) {
+	globalEval: function( data ) {//ok
 		data = jQuery.trim( data );
 
 		if ( data ) {
@@ -644,15 +650,15 @@ jQuery.extend({
 				script = document.createElement("script");
 
 			script.type = "text/javascript";
-			if ( jQuery.browser.msie )
+			if ( jQuery.browser.msie )//ie就直接赋值为text属性复制data
 				script.text = data;
 			else
-				script.appendChild( document.createTextNode( data ) );
+				script.appendChild( document.createTextNode( data ) );//否则创建文本节点，插入到script标签中
 
 			// Use insertBefore instead of appendChild  to circumvent an IE6 bug.
 			// This arises when a base node is used (#2709).
-			head.insertBefore( script, head.firstChild );
-			head.removeChild( script );
+			head.insertBefore( script, head.firstChild );//将上面的script标签插入到head的第1个元素前面
+			head.removeChild( script );//为什么要移除
 		}
 	},
 
@@ -662,21 +668,21 @@ jQuery.extend({
 
 	cache: {},
 
-	data: function( elem, name, data ) {
+	data: function( elem, name, data ) {//jQuery静态
 		elem = elem == window ?
 			windowData :
 			elem;
 
-		var id = elem[ expando ];
+		var id = elem[ expando ];//expando = "jQuery" + now()
 
 		// Compute a unique ID for the element
 		if ( !id )
-			id = elem[ expando ] = ++uuid;
+			id = elem[ expando ] = ++uuid;//设置一个唯一自增id
 
 		// Only generate the data cache if we're
 		// trying to access or manipulate it
 		if ( name && !jQuery.cache[ id ] )
-			jQuery.cache[ id ] = {};
+			jQuery.cache[ id ] = {};//新建一个值为{}的id属性
 
 		// Prevent overriding the named cache with undefined values
 		if ( data !== undefined )
@@ -729,7 +735,7 @@ jQuery.extend({
 	},
 
 	// args is for internal usage only
-	each: function( object, callback, args ) {
+	each: function( object, callback, args ) {//静态方法
 		var name, i = 0, length = object.length;
 
 		if ( args ) {//如果args为真
@@ -750,15 +756,18 @@ jQuery.extend({
 						break;
 			} else //如果有length属性
 				for ( var value = object[0];
+				//这里有一个用法注意:object[i] ，object.get[i]等价(转换为dom)；callback中this会用value代替
+				//callback中参数形式 function(i,value){},如果回调返回true，相当于continue，返回false相当于break,因为
+				//回调返回false，这里的循环会跳出
 					i < length && callback.call( value, i, value ) !== false; value = object[++i] ){}
 		}
 
 		return object;//链式调用
 	},
 
-	prop: function( elem, value, type, i, name ) {
+	prop: function( elem, value, type, i, name ) {//一般返回数值
 		// Handle executable functions
-		if ( jQuery.isFunction( value ) )
+		if ( jQuery.isFunction( value ) )//如果value是函数，执行函数的结果赋值给value
 			value = value.call( elem, i );
 
 		// Handle passing in a number to a CSS property
@@ -771,7 +780,9 @@ jQuery.extend({
 	className: {
 		// internal only, use addClass("class")
 		add: function( elem, classNames ) {
+			//classNames可能是包含空格的多个class
 			jQuery.each((classNames || "").split(/\s+/), function(i, className){
+				//如果是元素节点，并且之前没有这个class
 				if ( elem.nodeType == 1 && !jQuery.className.has( elem.className, className ) )
 					elem.className += (elem.className ? " " : "") + className;
 			});
@@ -780,6 +791,8 @@ jQuery.extend({
 		// internal only, use removeClass("class")
 		remove: function( elem, classNames ) {
 			if (elem.nodeType == 1)
+				//classNames参数为空，则删除所有class
+				//否则，elem的className如果不含有classNames，就push到临时数组，最后用“ ”来join这个数组
 				elem.className = classNames != undefined ?
 					jQuery.grep(elem.className.split(/\s+/), function(className){
 						return !jQuery.className.has( classNames, className );
@@ -788,24 +801,25 @@ jQuery.extend({
 		},
 
 		// internal only, use hasClass("class")
-		has: function( elem, className ) {
+		has: function( elem, className ) {//是否存在这个className
 			return jQuery.inArray( className, (elem.className || elem).toString().split(/\s+/) ) > -1;
 		}
 	},
 
 	// A method for quickly swapping in/out CSS properties to get correct calculations
+	//改变elem在options中制定的style属性，以便在callback中执行，执行完后再恢复
 	swap: function( elem, options, callback ) {
 		var old = {};
 		// Remember the old values, and insert the new ones
-		for ( var name in options ) {
+		for ( var name in options ) {//替换elem.style的属性，同时保存elem.style原来的属性
 			old[ name ] = elem.style[ name ];
 			elem.style[ name ] = options[ name ];
 		}
 
-		callback.call( elem );
+		callback.call( elem );//回调
 
 		// Revert the old values
-		for ( var name in options )
+		for ( var name in options )//重新恢复原来的属性
 			elem.style[ name ] = old[ name ];
 	},
 
@@ -1113,7 +1127,7 @@ jQuery.extend({
 		// elem is actually elem.style ... set the style
 
 		// IE uses filters for opacity
-		if ( msie && name == "opacity" ) {// 
+		if ( msie && name == "opacity" ) {// ie滤镜效果需要特殊处理
 			if ( set ) {
 				// IE has trouble with opacity if it does not have layout
 				// Force it by setting the zoom level
@@ -1129,7 +1143,7 @@ jQuery.extend({
 				"";
 		}
 
-		//absolute-size 转换为 fontSize； 
+		//类似absolute-size 转换为 fontSize； js访问样式的属性时需要转换
 		name = name.replace(/-([a-z])/ig, function(all, letter){
 			return letter.toUpperCase();
 		});
@@ -1214,6 +1228,7 @@ jQuery.extend({
 
 		// Go through the array, only saving the items
 		// that pass the validator function
+		//遍历elems
 		for ( var i = 0, length = elems.length; i < length; i++ )
 			if ( !inv != !callback( elems[ i ], i ) )
 				ret.push( elems[ i ] );
@@ -1227,13 +1242,13 @@ jQuery.extend({
 		// Go through the array, translating each of the items to their
 		// new value (or values).
 		for ( var i = 0, length = elems.length; i < length; i++ ) {
-			var value = callback( elems[ i ], i );
+			var value = callback( elems[ i ], i );//参数顺序：值,index
 
 			if ( value != null )
 				ret[ ret.length ] = value;
 		}
 
-		return ret.concat.apply( [], ret );
+		return ret.concat.apply( [], ret );//concat执行一下，有什么用？
 	}
 });
 
@@ -1988,7 +2003,7 @@ jQuery.event = {
 		}
 	},
 
-	trigger: function(type, data, elem, donative, extra) {
+	trigger: function(type, data, elem, donative, extra) {//event
 		// Clone the incoming data, if any
 		data = jQuery.makeArray(data);
 
@@ -2265,7 +2280,7 @@ jQuery.fn.extend({
 	},
 
 	trigger: function( type, data, fn ) {
-		return this.each(function(){
+		return this.each(function(){//遍历
 			jQuery.event.trigger( type, data, this, true, fn );
 		});
 	},
