@@ -85,10 +85,10 @@ jQuery.fn = jQuery.prototype = {
 	},
 
 	// The current version of jQuery being used
-	jquery: "1.2.6",
+	jquery: "1.2.6",//版本，如果有这个属性，说明是jQuery对象
 
 	// The number of elements contained in the matched element set
-	size: function() {
+	size: function() {//匹配到的对象的数量
 		return this.length;
 	},
 
@@ -104,7 +104,7 @@ jQuery.fn = jQuery.prototype = {
 			jQuery.makeArray( this ) ://如果没有参数，返回所有dom的数组(原理:elems[i]=>elems.get(i))
 
 			// Return just the object
-			this[ num ];
+			this[ num ];//因为this代表的对象已经是数组了，通过构造函数创建时的makeArray, setArray
 	},
 
 	// Take an array of elements and push it onto the stack
@@ -120,7 +120,7 @@ jQuery.fn = jQuery.prototype = {
 		var ret = jQuery( elems );
 
 		// Add the old object onto the stack (as a reference)
-		ret.prevObject = this;
+		ret.prevObject = this;//保存引用
 
 		// Return the newly-formed element set
 		return ret;
@@ -164,7 +164,7 @@ jQuery.fn = jQuery.prototype = {
 		if ( name.constructor == String )//字符串
 			if ( value === undefined )//取值一般取第1个元素
 				// return  a && b 的用法：  1, a真 返回b  2，a假，返回a
- 				return this[0] && jQuery[ type || "attr" ]( this[0], name );//返回第1个元素的属性
+ 				return this[0] && jQuery[ type || "attr" ]( this[0], name );//返回第1个元素的属性；中括号用法，相当于.attr
 
 			else {
 				options = {};
