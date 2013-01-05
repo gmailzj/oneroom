@@ -17,7 +17,7 @@ var _jQuery = window.jQuery,
 
 var jQuery = window.jQuery = window.$ = function( selector, context ) {
 	// The jQuery object is actually just the init constructor 'enhanced'
-	//jQuery(selector, context)没有new ，执行后返回一个jQuery对象()，真正的构造函数是jQuery.fn.init，
+	//jQuery(selector, context)执行时，没有new ，执行后返回一个jQuery对象，真正的构造函数是jQuery.fn.init，
 	return new jQuery.fn.init( selector, context );
 };
 
@@ -67,19 +67,21 @@ jQuery.fn = jQuery.prototype = {
 							return jQuery().find( selector );
 
 						// Otherwise, we inject the element directly into the jQuery object
-						return jQuery( elem );
+						return jQuery( elem );//转化DOM为jQuery对象
 					}
 					selector = [];
 				}
 
 			// HANDLE: $(expr, [context])
 			// (which is just equivalent to: $(content).find(expr)
-			} else//第4种情况  css表达式查询
+			} else//第4种情况  css表达式查询 用到的是Sizzle库
 				return jQuery( context ).find( selector );
 
 		// HANDLE: $(function)
 		// Shortcut for document ready
 		} else if ( jQuery.isFunction( selector ) )//第5种情况 函数
+			//js中属性可以用.attr来访问，也可以用['attr']来访问
+			//根据jQuery.fn.ready是true还是false，执行jQuery( document ).ready(selector)或者是jQuery( document ).load(selector)
 			return jQuery( document )[ jQuery.fn.ready ? "ready" : "load" ]( selector );
 
 		return this.setArray(jQuery.makeArray(selector));//先变成伪数组(循环取值)，然后变成数组(通过Array.prototype.push.call或者apply)
@@ -105,7 +107,7 @@ jQuery.fn = jQuery.prototype = {
 			jQuery.makeArray( this ) ://如果没有参数，返回所有dom的数组(原理:elems[i]=>elems.get(i))
 
 			// Return just the object
-			this[ num ];//因为this代表的对象已经是数组了，通过构造函数创建时的makeArray, setArray
+			this[ num ];//因为this代表的对象已经是数组了(通过构造函数创建时的makeArray, setArray)
 	},
 
 	// Take an array of elements and push it onto the stack
@@ -114,7 +116,6 @@ jQuery.fn = jQuery.prototype = {
 	setArray(elems)只会改变当前jQuery对象的集合，它会清除这个对象之前的元素，
 	但是有的时候我们想保存原来的集合中元素，pushStack函数新建一个jQuery对象同时
 	保存原来对象的引用。
-
 	*/
 	pushStack: function( elems ) {
 		// Build a new jQuery matched element set
@@ -144,6 +145,10 @@ jQuery.fn = jQuery.prototype = {
 	// (You can seed the arguments with an array of args, but this is
 	// only used internally.)
 	each: function( callback, args ) {//间接调用jQuery静态方法jQuery.each
+		//注意callback的参数形式，
+		//如果没有args参数，callback 形式如 function(i, value){this}, 第1个为key(序号)，第2个为集合当前遍历的值(DOM)
+		//而且callback中的this指的是集合当前遍历的值(DOM)，不是jQuery对象
+		//如果有args参数，
 		return jQuery.each( this, callback, args );
 	},
 
@@ -202,7 +207,7 @@ jQuery.fn = jQuery.prototype = {
 		var ret = "";
 		jQuery.each( text || this, function(){
 			jQuery.each( this.childNodes, function(){
-				if ( this.nodeType != 8 )//注释
+				if ( this.nodeType != 8 )//不是注释
 					ret += this.nodeType != 1 ?//不是元素
 						this.nodeValue :
 						jQuery.fn.text( [ this ] );//递归
@@ -440,7 +445,7 @@ jQuery.fn = jQuery.prototype = {
 		});
 	},
 
-	html: function( value ) {//实例方法  var html = elem.html();如果存在value，则是赋值，而且只取第一个项，否则是取值
+	html: function( value ) {//实例方法  var html = elem.html();如果存在value，则是赋值，否则是取值，而且只取第一项的innerHTML，
 		return value == undefined ?
 			(this[0] ?
 				this[0].innerHTML :
@@ -452,12 +457,13 @@ jQuery.fn = jQuery.prototype = {
 		return this.after( value ).remove();
 	},
 
-	eq: function( i ) {//调用下面的slice方法
+	eq: function( i ) {//ok调用下面的slice方法
 		return this.slice( i, i + 1 );
 	},
 
-	slice: function() {
-		return this.pushStack( Array.prototype.slice.apply( this, arguments ) );//上面eq的参数赋值给arguments的值作为数组slice的参数
+	slice: function() {//ok
+		//上面eq的参数赋值给arguments的值作为数组slice的参数
+		return this.pushStack( Array.prototype.slice.apply( this, arguments ) );
 	},
 
 	map: function( callback ) {

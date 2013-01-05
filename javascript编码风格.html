@@ -1,0 +1,478 @@
+﻿<p>
+	<h1 class="c2" style="font-size:24pt;font-family:Arial;">
+		<span class="c10" style="font-size:18pt;">Douban Javascript Core Style Guideline</span>
+	</h1>
+	<h2 class="c2" style="font-size:18pt;font-family:Arial;">
+		<span class="c13" style="font-size:14pt;">1. Javascript代码应符合Douban-JSLint检验标准</span>
+	</h2>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		1-1. 语句必须都有分号结尾，除了for, function, if, switch, try, while
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		1-2. 只有长语句可以考虑断行，如：
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;"></span>
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;TEMPL_SONGLIST.replace('{TABLE}', da['results'])<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.replace('{PREV_NUM}', prev)<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.replace('{NEXT_NUM}', next)<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.replace('{CURRENT_NUM}', current)<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;.replace('{TOTAL_NUM}', da.page_total);</span>
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		为了避免和JSLint的检验机制冲突，“.”或“＋”这类操作符放在行尾，上面代码应改为：
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;"></span>
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;TEMPL_SONGLIST.replace('{TABLE}', da['results']).<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;replace('{PREV_NUM}', prev).<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;replace('{NEXT_NUM}', next).<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;replace('{CURRENT_NUM}', current).<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;replace('{TOTAL_NUM}', da.page_total);</span>
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		1-3. 避免额外的逗号。如：var arr = [1,2,3,];
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		1-4. 所有的循环体和判断体都需要用"{}"括起来。如：
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		错：
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if (condition)<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;statement;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;或<br />
+<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (condition) statement;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		对:
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if (condition) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;statement;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;}</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;或<br />
+<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if (condition) { statement; }</span>
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		1-5. for-in循环体中必须用hasOwnProperty方法检查成员是否为自身成员。避免来自原型链上的污染。
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		1-6. 变量声明。变量声明应放在function的最上面。避免使用未声明的变量。
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		错：
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if (n &gt; 0) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;var isvalid = true;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;}&nbsp;</span><br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		对：
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;var isvalid;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if (n &gt; 0) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;isvalid = true;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;}&nbsp;</span>
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		1-7. 不要使用with, void, eval。
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		1-8. 使用严格的条件判断符。用===代替==，用!==代替!=。
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		1-9. 下面类型的对象不建议用new构造：new Number, new String, new Boolean, new Object(用{}代替), new Array(用[]代替)。
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		1-10. 引用对象成员用obj.prop1代替obj[“prop1”]，除非属性名是变量。
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		注：Douban-JSLint是定制过的JSLint
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		注：如果模块代码中，使用其它全局变量想跳过JSLint的检查，可以在该文件中加入/*global*/声明，如： /*global alert: true, console: true, top: true, setTimeout: true */
+	</p>
+	<h2 class="c2" style="font-size:18pt;font-family:Arial;">
+		<span class="c13" style="font-size:14pt;">2. Javascript命名规则</span>
+	</h2>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		2-1. 构造器的首字母大写。如：
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;"></span>
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;function Dialog (config) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;statement;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;}<br />
+<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;var dlg = new Dialog({...});</span>
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		2-2. 对象的属性或方法名采用小驼峰式(lower camel-case)，如"init", "bindEvent", "updatePosition"：
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Dialog.prototype = {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;init: function () {},<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;bindEvent: function () {},<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;updatePosition: function () {}<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;...<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;};</span>
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		2-3. 私有变量名用下划线开头。如："_current", "_defaultConfig"
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		2-4. 常量名全部大写，单词间用下划线分隔。如：“CSS_BTN_CLOSE”, "TXT_LOADING"
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		2-5. 变量名的前缀：
+	</p>
+<a href="https://docs.google.com/document/pub?id=17ICSeE4Qd04-1U-pphmKCAmfgJGEVjqDellbu4oAiqU#" name="c524abc33dc033f0f21d482c6e61e1eb5713d15e"></a><a href="https://docs.google.com/document/pub?id=17ICSeE4Qd04-1U-pphmKCAmfgJGEVjqDellbu4oAiqU#" name="0"></a>
+	<table cellpadding="0" cellspacing="0" class="c14" style="font-family:arial, sans, sans-serif;">
+		<tbody>
+			<tr>
+				<td class="c5" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						Prefix
+					</p>
+				</td>
+				<td class="c3" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						Element
+					</p>
+				</td>
+				<td class="c7" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						Example
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="c5" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						n
+					</p>
+				</td>
+				<td class="c3" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						integer
+					</p>
+				</td>
+				<td class="c7" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						nVariableName
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="c5" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						i,j,k,m,n, etc. *
+					</p>
+				</td>
+				<td class="c3" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						integer as counter/iterator
+					</p>
+				</td>
+				<td class="c7" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						(for i=0; i&lt;=oArray.length; i++)
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="c5" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						s
+					</p>
+				</td>
+				<td class="c3" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						string
+					</p>
+				</td>
+				<td class="c7" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						sVariableName
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="c5" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						o
+					</p>
+				</td>
+				<td class="c3" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						object
+					</p>
+				</td>
+				<td class="c7" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						oObjectName
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="c5" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						is, can, has
+					</p>
+				</td>
+				<td class="c3" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						boolean
+					</p>
+				</td>
+				<td class="c7" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						[Boolean name]ConditionName
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="c5" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						event method
+					</p>
+				</td>
+				<td class="c3" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						event attachment
+					</p>
+				</td>
+				<td class="c7" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						[event type]_MethodName
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="c5" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						get
+					</p>
+				</td>
+				<td class="c3" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						accessor method
+					</p>
+				</td>
+				<td class="c7" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						getMethodName
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="c5" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						set
+					</p>
+				</td>
+				<td class="c3" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						accessor method
+					</p>
+				</td>
+				<td class="c7" style="vertical-align:top;border:1pt solid #000000;">
+					<p class="c2" style="font-size:11pt;font-family:Arial;">
+						setMethodName
+					</p>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		<span class="c12" style="font-size:9pt;">Note: Only a counter/iterator should use a single-letter designation.</span>
+	</p>
+	<h2 class="c2" style="font-size:18pt;font-family:Arial;">
+		<span class="c13" style="font-size:14pt;">3. 代码格式化要求</span>
+	</h2>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		3-1. 语句中的必要空格和缩进
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		3-1-1. 用来包含语句的"()"前后需要跟空格，诸如： if / for / while / switch ( statements ) { … } 等
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		3-1-2. "="前后需要跟空格
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		3-1-3. 数组成员间的","后面需要跟空格
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		不好：
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;"></span>
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;for (t in selected) { if (!hash[t]) deselect(t) }</span>
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		好：
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;"></span>
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;for ( t in selected ) {&nbsp;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if ( !hash[t] ) {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; deselect(t);&nbsp;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;}<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;}</span>
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		3-2. 长语句采用断行:
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		不好：
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;"></span>
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;TEMPL_SONGLIST.replace('{TABLE}', da['results']).replace('{PREV_NUM}', prev).replace('{NEXT_NUM}', next).replace('{CURRENT_NUM}', current).replace('{TOTAL_NUM}', da.page_total);</span>
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		好：
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;"></span>
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;TEMPL_SONGLIST.replace('{TABLE}', da['results']).<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;replace('{PREV_NUM}', prev).<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;replace('{NEXT_NUM}', next).<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;replace('{CURRENT_NUM}', current).<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;replace('{TOTAL_NUM}', da.page_total);</span>
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		3-3. 格式化对象参数：
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		不好：
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;"></span>
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; embedSWF(id, { url: '/swf/player30792.swf?url=' + el.href, width: 261, height: 30, params: { wmode:'transparent' }, attributes: { id: "player-sample" + i, name: "player-sample" + i }});</span>
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<br />
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		好：
+	</p>
+	<p class="c0" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;"></span>
+	</p>
+	<p class="c2" style="font-size:11pt;font-family:Arial;">
+		<span class="c8" style="color:#274E13;font-size:10pt;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; embedSWF(id, {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;url: '/swf/player30792.swf?url=' + el.href,&nbsp;<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;width: 261,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;height: 30,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;params: { wmode:'transparent' },<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;attributes: {<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;id: "player-sample" + i,<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;name: "player-sample" + i<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;}<br />
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;});</span>
+	</p>
+</p>
+<p>
+	<br />
+</p>
