@@ -17,6 +17,7 @@ var _jQuery = window.jQuery,
 
 var jQuery = window.jQuery = window.$ = function( selector, context ) {
 	// The jQuery object is actually just the init constructor 'enhanced'
+	//jQuery(selector, context)没有new ，执行后返回一个jQuery对象()，真正的构造函数是jQuery.fn.init，
 	return new jQuery.fn.init( selector, context );
 };
 
@@ -188,22 +189,23 @@ jQuery.fn = jQuery.prototype = {
 		// ignore negative width and height values
 		//忽略不合法的宽度和高度的赋值操作
 		if ( (key == 'width' || key == 'height') && parseFloat(value) < 0 )
-			value = undefined;
+			value = undefined;//value == undefined的时候，attr函数就只会取值，不会赋值
 		return this.attr( key, value, "curCSS" );
 	},
 
 	text: function( text ) {
-		if ( typeof text != "object" && text != null )
+		//赋值
+		if ( typeof text != "object" && text != null )//不是object且不为null，可以是数字、字符串
 			return this.empty().append( (this[0] && this[0].ownerDocument || document).createTextNode( text ) );
 
+		//取值
 		var ret = "";
-
 		jQuery.each( text || this, function(){
 			jQuery.each( this.childNodes, function(){
-				if ( this.nodeType != 8 )
-					ret += this.nodeType != 1 ?
+				if ( this.nodeType != 8 )//注释
+					ret += this.nodeType != 1 ?//不是元素
 						this.nodeValue :
-						jQuery.fn.text( [ this ] );
+						jQuery.fn.text( [ this ] );//递归
 			});
 		});
 
@@ -367,7 +369,7 @@ jQuery.fn = jQuery.prototype = {
 	},
 
 	val: function( value ) {
-		if ( value == undefined ) {
+		if ( value == undefined ) {//如果是取值
 
 			if ( this.length ) {
 				var elem = this[0];
@@ -412,10 +414,10 @@ jQuery.fn = jQuery.prototype = {
 		}
 
 		if( value.constructor == Number )
-			value += '';
+			value += '';//转换成字符串
 
 		return this.each(function(){
-			if ( this.nodeType != 1 )
+			if ( this.nodeType != 1 )//必须是元素
 				return;
 
 			if ( value.constructor == Array && /radio|checkbox/.test( this.type ) )
@@ -609,6 +611,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 	return target;
 };
 
+//闭包
 var expando = "jQuery" + now(), uuid = 0, windowData = {},
 	// exclude the following css properties to add px
 	exclude = /z-?index|font-?weight|opacity|zoom|line-?height/i,
@@ -668,16 +671,16 @@ jQuery.extend({
 
 	cache: {},
 
-	data: function( elem, name, data ) {//jQuery静态
+	data: function( elem, name, data ) {//jQuery.data静态方法
 		elem = elem == window ?
 			windowData :
 			elem;
 
-		var id = elem[ expando ];//expando = "jQuery" + now()
+		var id = elem[ expando ];//expando = "jQuery" + now() 
 
 		// Compute a unique ID for the element
-		if ( !id )
-			id = elem[ expando ] = ++uuid;//设置一个唯一自增id
+		if ( !id ) //elem是否已经存在这个expando属性
+			id = elem[ expando ] = ++uuid;//设置一个唯一自增id，uuid初始值是0
 
 		// Only generate the data cache if we're
 		// trying to access or manipulate it
@@ -686,7 +689,7 @@ jQuery.extend({
 
 		// Prevent overriding the named cache with undefined values
 		if ( data !== undefined )
-			jQuery.cache[ id ][ name ] = data;
+			jQuery.cache[ id ][ name ] = data;//保存name和data到cache中
 
 		// Return the named cache data, or the ID for the element
 		return name ?
@@ -959,23 +962,25 @@ jQuery.extend({
 		return ret;
 	},
 
-	clean: function( elems, context ) {
+	clean: function( elems, context ) {//把html字符串转化成dom对象的数组
 		var ret = [];
-		context = context || document;
+		context = context || document;//默认上下文document
 		// !context.createElement fails in IE with an error but returns typeof 'object'
 		if (typeof context.createElement == 'undefined')
 			context = context.ownerDocument || context[0] && context[0].ownerDocument || document;
 
-		jQuery.each(elems, function(i, elem){
+		jQuery.each(elems, function(i, elem){//key,value
 			if ( !elem )
 				return;
 
-			if ( elem.constructor == Number )
+			if ( elem.constructor == Number )//数字转化成字符串
 				elem += '';
 
 			// Convert html string into DOM nodes
 			if ( typeof elem == "string" ) {
 				// Fix "XHTML"-style tags in all browsers
+				//对于<div/>等修正为<div></div>,
+				//<img/>等不需要修正
 				elem = elem.replace(/(<(\w+)[^>]*?)\/>/g, function(all, front, tag){
 					return tag.match(/^(abbr|br|col|img|input|link|meta|param|hr|area|embed)$/i) ?
 						all :
@@ -983,8 +988,10 @@ jQuery.extend({
 				});
 
 				// Trim whitespace, otherwise indexOf won't work as expected
+				//去掉空格
 				var tags = jQuery.trim( elem ).toLowerCase(), div = context.createElement("div");
 
+				//标签修正
 				var wrap =
 					// option or optgroup
 					!tags.indexOf("<opt") &&
@@ -1013,9 +1020,11 @@ jQuery.extend({
 					[ 0, "", "" ];
 
 				// Go to html and back, then peel off extra wrappers
+				//采用innerHTMl转换成DOM
 				div.innerHTML = wrap[1] + elem + wrap[2];
 
 				// Move to the right depth
+				//转到正确的深度
 				while ( wrap[0]-- )
 					div = div.lastChild;
 
@@ -1036,6 +1045,7 @@ jQuery.extend({
 							tbody[ j ].parentNode.removeChild( tbody[ j ] );
 
 					// IE completely kills leading whitespace when innerHTML is used
+					// 使用innerHTML,IE会去掉开头的文本节点。所以要补上
 					if ( /^\s/.test( elem ) )
 						div.insertBefore( context.createTextNode( elem.match(/^\s*/)[0] ), div.firstChild );
 
@@ -1154,11 +1164,11 @@ jQuery.extend({
 		return elem[ name ];//取值
 	},
 
-	trim: function( text ) {//去空
+	trim: function( text ) {//去空,jQuery.trim静态方法
 		return (text || "").replace( /^\s+|\s+$/g, "" );
 	},
 
-	makeArray: function( array ) {
+	makeArray: function( array ) {//jQuery.makeArray静态方法
 		var ret = [];
 
 		if( array != null ){
@@ -1174,8 +1184,8 @@ jQuery.extend({
 
 		return ret;
 	},
-
-	inArray: function( elem, array ) {//普通遍历
+	//返回elem在array数组中的位置，没有找到返回-1
+	inArray: function( elem, array ) {//普通遍历，jQuery.inArray静态方法
 		for ( var i = 0, length = array.length; i < length; i++ )
 		// Use === because on IE, window == document
 			if ( array[ i ] === elem )//用的是===恒等于
@@ -1184,7 +1194,7 @@ jQuery.extend({
 		return -1;
 	},
 
-	merge: function( first, second ) {
+	merge: function( first, second ) {//jQuery.merge静态，合并second的项到first，返回first
 		// We have to loop this way because IE & Opera overwrite the length
 		// expando of getElementsByTagName
 		var i = 0, elem, pos = first.length;
@@ -1201,8 +1211,8 @@ jQuery.extend({
 
 		return first;
 	},
-
-	unique: function( array ) {
+	//删除数组中重复元素。只处理删除DOM元素数组，而不能处理字符串或者数字数组
+	unique: function( array ) {//jQuery.unique静态方法
 		var ret = [], done = {};
 
 		try {
@@ -1210,7 +1220,7 @@ jQuery.extend({
 			for ( var i = 0, length = array.length; i < length; i++ ) {
 				var id = jQuery.data( array[ i ] );
 
-				if ( !done[ id ] ) {
+				if ( !done[ id ] ) {//是否已经有了，没有说明是新值，push进去
 					done[ id ] = true;
 					ret.push( array[ i ] );
 				}
@@ -1236,13 +1246,13 @@ jQuery.extend({
 		return ret;
 	},
 
-	map: function( elems, callback ) {
+	map: function( elems, callback ) {//遍历数组的每一项，并且用回调执行后的新值代替原来的值
 		var ret = [];
 
 		// Go through the array, translating each of the items to their
 		// new value (or values).
 		for ( var i = 0, length = elems.length; i < length; i++ ) {
-			var value = callback( elems[ i ], i );//参数顺序：值,index
+			var value = callback( elems[ i ], i );//参数顺序：值,index,回调的参数要注意
 
 			if ( value != null )
 				ret[ ret.length ] = value;
