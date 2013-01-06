@@ -1147,14 +1147,16 @@ jQuery.extend({
 			if ( set ) {
 				// IE has trouble with opacity if it does not have layout
 				// Force it by setting the zoom level
-				elem.zoom = 1;
+				elem.zoom = 1;//IE设置滤镜的时候需要设置zoom为1
 
 				// Set the alpha filter to set the opacity
+				//如果不是数值就将elem.filter赋值为空
 				elem.filter = (elem.filter || "").replace( /alpha\([^)]*\)/, "" ) +
 					(parseInt( value ) + '' == "NaN" ? "" : "alpha(opacity=" + value * 100 + ")");
 			}
 
 			return elem.filter && elem.filter.indexOf("opacity=") >= 0 ?
+				//不[1]表示匹配捕获到的1组括号里面的()
 				(parseFloat( elem.filter.match(/opacity=([^)]*)/)[1] ) / 100) + '':
 				"";
 		}
