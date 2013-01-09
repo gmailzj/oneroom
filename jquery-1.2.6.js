@@ -445,7 +445,8 @@ jQuery.fn = jQuery.prototype = {
 		});
 	},
 
-	html: function( value ) {//实例方法  var html = elem.html();如果存在value，则是赋值，否则是取值，而且只取第一项的innerHTML，
+	html: function( value ) {//实例方法 
+	// var html = elem.html();如果存在value，则是赋值，否则是取值，而且只取第一项的innerHTML，
 		return value == undefined ?
 			(this[0] ?
 				this[0].innerHTML :
@@ -466,6 +467,7 @@ jQuery.fn = jQuery.prototype = {
 		return this.pushStack( Array.prototype.slice.apply( this, arguments ) );
 	},
 
+	//实例方法
 	map: function( callback ) {
 		return this.pushStack( jQuery.map(this, function(elem, i){
 			return callback.call( elem, i, elem );
@@ -968,7 +970,7 @@ jQuery.extend({
 		return ret;
 	},
 
-	clean: function( elems, context ) {//把html字符串转化成dom对象的数组
+	clean: function( elems, context ) {//静态方法 把html字符串转化成dom对象的数组
 		var ret = [];
 		context = context || document;//默认上下文document
 		// !context.createElement fails in IE with an error but returns typeof 'object'
@@ -1254,9 +1256,11 @@ jQuery.extend({
 		return ret;
 	},
 
-	map: function( elems, callback ) {//遍历数组的每一项，并且用回调执行后的新值代替原来的值
+	//静态方法 //遍历数组的每一项，并且用回调执行后的新值代替原来的值，elems可以是普通数组
+	map: function( elems, callback ) {
 		var ret = [];
 
+		//转换函数可以返回转换后的值、null（删除数组中的项目）或一个包含值的数组
 		// Go through the array, translating each of the items to their
 		// new value (or values).
 		for ( var i = 0, length = elems.length; i < length; i++ ) {
@@ -1265,7 +1269,7 @@ jQuery.extend({
 			if ( value != null )
 				ret[ ret.length ] = value;
 		}
-
+		//concat执行一下，如果value是数组，也将各个值返回到最终值
 		return ret.concat.apply( [], ret );//concat执行一下，有什么用？
 	}
 });
