@@ -4,7 +4,11 @@
  *@date:2012-11-20
  */
 
+/*
+疑问:
+1 childNodes和children有什么区别
 
+*/
 /*
 键盘
         KEY_BACKSPACE: 8,
@@ -17,6 +21,14 @@
         KEY_DOWN: 40,
         KEY_DELETE: 46,
 */
+/*
+ Object.prototype.toString.call(jQuery.isFunction)
+"[object Function]"
+ Object.prototype.toString.call(jQuery.fn)
+"[object Object]"
+
+*/
+
 /*通用函数*/
 var isUndef = function(a){ return typeof a === "undefined";};
 
@@ -69,32 +81,32 @@ String.prototype.trim = function() {
 //查找值是否存在，存在返回位置，否则返回-1
 Array.prototype._in=function(find)
 {
-	for (i = 0; i < this.length; i++)
-	{
-		if (find==this[i])
-		return i;
-	}
-	return -1;
+    for (i = 0; i < this.length; i++)
+    {
+        if (find==this[i])
+        return i;
+    }
+    return -1;
 }
 //删除指定索引位置的成员
 Array.prototype._removeAt=function(idx) 
 { 
-	this.splice(idx, 1);
-	return this;
+    this.splice(idx, 1);
+    return this;
 } ;
 
 //删除指定value的项
 Array.prototype._remove=function(v)
 {
-	var tmp=[];
-	for(var i=0;i<this.length;i++)
-	{
-		if(this[i]!=v)
-		{
-			tmp.push(this[i]);
-		}
-	}
-	return tmp;
+    var tmp=[];
+    for(var i=0;i<this.length;i++)
+    {
+        if(this[i]!=v)
+        {
+            tmp.push(this[i]);
+        }
+    }
+    return tmp;
 }
 
 
