@@ -34,7 +34,7 @@ var quickExpr = /^[^<]*(<(.|\s)+>)[^>]*$|^#(\w+)$/,
 jQuery.fn = jQuery.prototype = {
 	init: function( selector, context ) {
 		// Make sure that a selection was provided
-		selector = selector || document;//如果没有参数，默认取document
+		selector = selector || document;//如果没有参数，选择器默认取document
 
 		// Handle $(DOMElement)
 		if ( selector.nodeType ) {//DOM对象 第1种情况
@@ -79,11 +79,11 @@ jQuery.fn = jQuery.prototype = {
 
 		// HANDLE: $(function)
 		// Shortcut for document ready
-		} else if ( jQuery.isFunction( selector ) )//第5种情况 函数
+		} else if ( jQuery.isFunction( selector ) ){//第5种情况 函数
 			//js中属性可以用.attr来访问，也可以用['attr']来访问
 			//根据jQuery.fn.ready是true还是false，执行jQuery( document ).ready(selector)或者是jQuery( document ).load(selector)
 			return jQuery( document )[ jQuery.fn.ready ? "ready" : "load" ]( selector );
-
+		}	
 		return this.setArray(jQuery.makeArray(selector));//先变成伪数组(循环取值)，然后变成数组(通过Array.prototype.push.call或者apply)
 	},
 
@@ -195,22 +195,22 @@ jQuery.fn = jQuery.prototype = {
 		//忽略不合法的宽度和高度的赋值操作
 		if ( (key == 'width' || key == 'height') && parseFloat(value) < 0 )
 			value = undefined;//value == undefined的时候，attr函数就只会取值，不会赋值
-		return this.attr( key, value, "curCSS" );
+		return this.attr( key, value, "curCSS" );//真正执行。第3个参数比较关键
 	},
 
 	text: function( text ) {
 		//赋值
-		if ( typeof text != "object" && text != null )//不是object且不为null，可以是数字、字符串
+		if ( typeof text != "object" && text != null )//不是object(注意typeof 数组是object)且不为null，可以是数字、字符串
 			return this.empty().append( (this[0] && this[0].ownerDocument || document).createTextNode( text ) );
 
 		//取值
 		var ret = "";
-		jQuery.each( text || this, function(){
-			jQuery.each( this.childNodes, function(){
+		jQuery.each( text || this, function(){//遍历匹配到的jQuery对象
+			jQuery.each( this.childNodes, function(){//遍历每一个对象的子节点
 				if ( this.nodeType != 8 )//不是注释
 					ret += this.nodeType != 1 ?//不是元素
 						this.nodeValue :
-						jQuery.fn.text( [ this ] );//递归
+						jQuery.fn.text( [ this ] );//递归,
 			});
 		});
 
@@ -218,9 +218,9 @@ jQuery.fn = jQuery.prototype = {
 	},
 
 	wrapAll: function( html ) {
-		if ( this[0] )
+		if ( this[0] ) //找到第1个元素
 			// The elements to wrap the target around
-			jQuery( html, this[0].ownerDocument )
+			jQuery( html, this[0].ownerDocument )//this[0].ownerDocument返回document对象(包含<!DOCTYPE>文档类型说明和html(也就是document.documentElement对象))
 				.clone()
 				.insertBefore( this[0] )
 				.map(function(){
@@ -241,16 +241,17 @@ jQuery.fn = jQuery.prototype = {
 			jQuery( this ).contents().wrapAll( html );
 		});
 	},
-
+	//1 参数是html字符串，把所有匹配的元素用其他元素的结构化标记包裹起来，当HTML标记代码中的元素包含文本时,会有问题
+	//2 参数是元素，比如document.getElementById('content'),把所有匹配的元素用其他元素的结构化标记包装起来
 	wrap: function( html ) {
-		return this.each(function(){
+		return this.each(function(){//遍历所有匹配到的元素
 			jQuery( this ).wrapAll( html );
 		});
 	},
 
 	append: function() {//
 		return this.domManip(arguments, true, false, function(elem){
-			if (this.nodeType == 1)
+			if (this.nodeType == 1)//这里的this是dom，不是jQuery对象
 				this.appendChild( elem );
 		});
 	},
@@ -503,26 +504,29 @@ jQuery.fn = jQuery.prototype = {
 		});
 	},
 
+	//dom manipulate的简称
 	domManip: function( args, table, reverse, callback ) {//clean
 		var clone = this.length > 1, elems;// clone为bool值
 
+		//对当前jquery对象中的每个元素都进行操作
 		return this.each(function(){
-			if ( !elems ) {
-				elems = jQuery.clean( args, this.ownerDocument );
+			if ( !elems ) {//闭包，第1次执行后就保存到内存，下次直接用
+				elems = jQuery.clean( args, this.ownerDocument );//得到
 
-				if ( reverse )
+				if ( reverse )//是否反序
 					elems.reverse();
 			}
 
-			var obj = this;
+			var obj = this;//间接引用、this在闭包中会有歧义
 
+			//ie的table不兼容，需要特殊处理
 			if ( table && jQuery.nodeName( this, "table" ) && jQuery.nodeName( elems[0], "tr" ) )
 				obj = this.getElementsByTagName("tbody")[0] || this.appendChild( this.ownerDocument.createElement("tbody") );
 
 			var scripts = jQuery( [] );
 
 			jQuery.each(elems, function(){
-				var elem = clone ?
+				var elem = clone ? //如果长度大于1，就采用clone，并取第1个元素，否则就是本元素
 					jQuery( this ).clone( true )[0] :
 					this;
 
@@ -970,7 +974,10 @@ jQuery.extend({
 		return ret;
 	},
 
-	clean: function( elems, context ) {//静态方法 把html字符串转化成dom对象的数组
+	clean: function( elems, context ) {
+		//静态方法 把html字符串转化成dom对象的数组,
+		//elems参数一般是字符串数组，参数的每一项的字符串参数dom是平级的，返回平级的多个；只有一个根节点，返回一个dom节点
+		//然后把所有匹配的放到一个集合并返回最终值
 		var ret = [];
 		context = context || document;//默认上下文document
 		// !context.createElement fails in IE with an error but returns typeof 'object'
@@ -1069,7 +1076,7 @@ jQuery.extend({
 				ret.push( elem );
 
 			else
-				ret = jQuery.merge( ret, elem );
+				ret = jQuery.merge( ret, elem );//elem的每一项添加到ret的尾部，添加的项key为数字
 
 		});
 
@@ -2938,7 +2945,7 @@ jQuery.extend({
 
 		if ( xml && data.documentElement.tagName == "parsererror" )
 			throw "parsererror";
-			
+
 		// Allow a pre-filtering function to sanitize the response
 		if( filter )
 			data = filter( data, type );
@@ -3556,7 +3563,7 @@ jQuery.fn.extend({
 // Create scrollLeft and scrollTop methods
 jQuery.each( ['Left', 'Top'], function(i, name) {
 	var method = 'scroll' + name;
-	
+
 	jQuery.fn[ method ] = function(val) {
 		if (!this[0]) return;
 
