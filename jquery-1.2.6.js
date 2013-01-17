@@ -1281,7 +1281,7 @@ jQuery.extend({
 	}
 });
 
-var userAgent = navigator.userAgent.toLowerCase();
+var userAgent = navigator.userAgent.toLowerCase();//小写的useragent
 
 // Figure out what browser is being used
 jQuery.browser = {
