@@ -603,7 +603,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 				var src = target[ name ], copy = options[ name ];
 
 				// Prevent never-ending loop
-				if ( target === copy )
+				if ( target === copy )//如果恒等，就跳到下一个
 					continue;
 
 				// Recurse if we're merging object values
