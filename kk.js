@@ -27,6 +27,21 @@
  Object.prototype.toString.call(jQuery.fn)
 "[object Object]"
 
+//注意
+javascript 的sort函数的默认比较是以字符串的ascii的形式来比较
+var a= [1,2, 23,3];
+a.sort();//a: [1, 2, 23, 3] 这种排序有问题
+a.sort(asc);// a: [1, 2, 3, 23];正确
+a.sort(desc);// a: [23, 3, 2, 1];正确
+function asc(a, b){
+    return a-b;
+}
+function desc(a, b){
+    return b-a;
+}
+
+
+
 */
 
 /*通用函数*/
