@@ -27,26 +27,35 @@
  Object.prototype.toString.call(jQuery.fn)
 "[object Object]"
 
-//注意
-javascript 的sort函数的默认比较是以字符串的ascii的形式来比较
-var a= [1,2, 23,3];
-a.sort();//a: [1, 2, 23, 3] 这种排序有问题
-a.sort(asc);// a: [1, 2, 3, 23];正确
-a.sort(desc);// a: [23, 3, 2, 1];正确
-function asc(a, b){
-    return a-b;
-}
-function desc(a, b){
-    return b-a;
-}
+*/
+/*现总结Error.name的六种值对应的信息：
+1. EvalError：eval()的使用与定义不一致 
+2. RangeError：数值越界 
+3. ReferenceError：非法或不能识别的引用数值 
+4. SyntaxError：发生语法解析错误 
+5. TypeError：操作数类型错误 
+6. URIError：URI处理函数使用不当*/
 
-
+/*
+var o={ name:'dd'};
+var f=function(str){return this.name+str}
+bindF = function(o,f){
+return function(){return f.apply(o,arguments)}}
+var t = bindF(o,f)
+t(5,6);//返回 dd5
 
 */
+
 
 /*通用函数*/
 var isUndef = function(a){ return typeof a === "undefined";};
 
+function MyRound(n,precision){
+    n = Math.round(n*Math.pow(10,precision))/Math.pow(10,precision);  
+    return n; 
+}
+
+//javascript num.toFixed方法，只能用于数字变量，不能直接用数字调用
 
 /**字符串功能拓展**/
 String.prototype.getBytes = function() {
