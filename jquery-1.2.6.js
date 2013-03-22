@@ -168,7 +168,7 @@ jQuery.fn = jQuery.prototype = {
 
 		// Look for the case where we're accessing a style value
 		if ( name.constructor == String )//字符串
-			if ( value === undefined )//取值一般取第1个元素
+			if ( value === undefined )//取值一般取第1个元素,退出函数
 				// return  a && b 的用法：  1, a真 返回b  2，a假，返回a
  				return this[0] && jQuery[ type || "attr" ]( this[0], name );//返回第1个元素的属性；中括号用法，相当于.attr
 
@@ -176,7 +176,7 @@ jQuery.fn = jQuery.prototype = {
 				options = {};
 				options[ name ] = value;
 			}
-
+		//下面是赋值操作	
 		// Check to see if we're setting style values
 		return this.each(function(i){//赋值的时候一般可以多个，通过each
 			// Set all the styles
