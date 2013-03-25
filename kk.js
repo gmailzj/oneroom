@@ -45,8 +45,65 @@ var t = bindF(o,f)
 t(5,6);//返回 dd5
 
 */
+//返回对象的key集合
+function getPropertyNames(o){
+    var r=[];
+    for(name in o) r.push(name);
+    return r;
+
+}
+
+function copyProperties(from, to){
+    if(!to) to={};
+    for(p in from) to[p] = from[p];
+    return to;
+}
+
+function copyUndefinedProperties(from, to){
+  for(p in from){
+    if(! p in to) to[p] = from[p];
+  }
+}
+
+//函数过滤回调
+function filterArray(a, fn){
+    var results = [];
+    var length = a.length;
+    for(var i=0; i<length; i++){
+        var element = a[i];
+        if(fn(element)) results.push(element);
+    }
+    return results;
+}
+
+function mapArray(a, fn){
+
+    var r = [];
+    var length = a.length;
+    for(var i=0; i<length; i++){
+        r[i] = fn(a[i]);
+    }
+    return r;
+}
 
 
+function bindMethod(o,fn){
+    return function(){
+        return fn.apply(o, arguments);
+    }
+
+}
+
+function bindArguments(fn){
+    var boundArgs = arguments;
+    return function(){
+        var args = [];
+        for(var i=1, len = boundArgs.length; i<len; i++) args.push(boundArgs[i]);
+        for(var i=1, len = arguments.length; i<len; i++) args.push(arguments[i]);
+        return f.apply(this, args);    
+    }
+
+}
 /*通用函数*/
 var isUndef = function(a){ return typeof a === "undefined";};
 
