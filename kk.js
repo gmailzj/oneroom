@@ -104,6 +104,39 @@ function bindArguments(fn){
     }
 
 }
+if (!Array.prototype.push){
+    Array.prototype.push = function(){
+        var len = this.length;
+        for (var i=0; i<arguments.length; i++) {
+            this[len + i] = arguments[i];
+        }
+        return this.length;
+    }
+}
+
+if (!Array.prototype.pop){
+    Array.prototype.pop = function(){
+        var returnValue = this[this.length - 1];
+        this.length--;
+        return returnValue;
+    }
+}
+
+if (!Array.prototype.splice){
+    Array.prototype.splice = function(start, deleteCount){
+        var len = arguments.length - 2;
+        var returnValue = this.slice(start);
+        for (var i = 0; i < len; i++) {
+            this[start + i] = arguments[i + 2];
+        }
+        for (var i = 0; i < returnValue.length - deleteCount; i++) {
+            this[start + len + i] = returnValue[deleteCount + i];
+        }
+        this.length = start + len + returnValue.length - deleteCount;
+        returnValue.length = deleteCount;
+        return returnValue;
+    }
+}
 /*通用函数*/
 var isUndef = function(a){ return typeof a === "undefined";};
 
