@@ -100,7 +100,7 @@ function bindArguments(fn){
         var args = [];
         for(var i=1, len = boundArgs.length; i<len; i++) args.push(boundArgs[i]);
         for(var i=1, len = arguments.length; i<len; i++) args.push(arguments[i]);
-        return f.apply(this, args);    
+        return fn.apply(this, args);    
     }
 
 }
