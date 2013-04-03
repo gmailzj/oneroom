@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>全局导入</title>
+
+
+</head>
+<body>
+<script>
+
+</script>
+ <pre>
+ 我们在编码过程中多多少少会使用到一些全局变量（window,document,自定义全局变量等等），
+ 了解javascript作用域链的人都知道，在局部作用域中访问全局变量需要一层一层遍历整个作用域链直至顶级作用域，
+ 而局部变量的访问效率则会更快更高，因此在局部作用域中高频率使用一些全局对象时可以将其导入到局部作用域中，例如：
+
+
+ 1 //1、作为参数传入模块
+ 2 (function(window,$){
+ 3     var xxx = window.xxx;
+ 4     $("#xxx1").xxx();
+ 5     $("#xxx2").xxx();
+ 6 })(window,jQuery);
+ 7 
+ 8 //2、暂存到局部变量
+ 9 function(){
+10     var doc = document;
+11     var global = window.global;
+12 }
+ 
+ </pre>
+
+</body>
+</html>
