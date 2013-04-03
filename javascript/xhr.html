@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>xmlHttpRequest</title>
+
+
+</head>
+<body>
+<div id='tips'>从前</div>
+<script>
+function getXMLHttpRequest(){ 
+ if(window.XMLHttpRequest){ 
+  return new XMLHttpRequest(); 
+ }else{ 
+  var names=["msxml","msxml2","msxml3","Microsoft"]; 
+  for(var i=0;i<names.length;i++){ 
+   try{ 
+    var name=names[i]+".XMLHTTP"; 
+    return new ActiveXObject(name); 
+   }catch(e){ 
+   } 
+  } 
+ } 
+ return null; 
+} 
+
+
+function getXMLHttpRequest(){ 
+	var me = arguments.callee;
+	if(window.XMLHttpRequest){ 
+		me = function(){
+			return new XMLHttpRequest(); 
+		}
+		
+	} else if(window.ActiveXObject) {
+		
+		me = function(){
+			return new ActiveXObject('Microsoft.XMLHTTP');  
+		}
+	} else {
+	
+		me = function (){
+			return null;
+		}
+	}
+	return me();
+}
+
+/*
+function getXMLHttpRequest(){
+	if(window.XMLHttpRequest){ 	
+		return new XMLHttpRequest(); 				
+	} else if(window.ActiveXObject) {			
+		return new ActiveXObject('Microsoft.XMLHTTP');
+	}
+	return null;	  	
+}
+*/
+var xhr = getXMLHttpRequest();
+var requestURL="data.txt?"//+Math.random();
+
+function handler2(){
+	if(xhr.readyState == 4){// 判断对象状态	
+		console.log(xhr);
+	    if(xhr.status == 200 || xhr.status==304){  // 请求结果已经成功返回		
+			document.getElementById('tips').innerHTML = xhr.responseText;
+		}
+	}
+}
+
+
+
+xhr.open("GET",requestURL,true);
+xhr.onreadystatechange = handler2;
+xhr.send(null);
+
+
+
+
+
+</script>
+ 
+</body>
+</html>

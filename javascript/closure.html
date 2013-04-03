@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>闭包的用法</title>
+
+
+</head>
+<body>
+<script>
+uniqueID = function(){
+	var me = arguments.callee;
+	if(!me.id) me.id =0 ;
+	return me.id++;
+}
+uniqueID2 = function(){
+	var id = 0;
+	return function(){
+		return id++;
+	};
+
+}
+
+var f = (function(){
+    var a = {name:"var3"};
+    var b = ["var1","var2"];
+    var c = document.getElementByTagName("li");
+    //****其它变量
+    //***一些运算
+    var res = function(){
+        alert(a.name);
+    }
+    return res;
+})()
+
+/*
+上述代码中变量f的返回值是由一个立即执行函数构成的闭包中返回的方法res，该变量保留了对于这个闭包中所有变量（a,b,c等）的引用，因此这两个变量会一直驻留在内存空间中,尤其是对于dom元素的引用对内存的消耗会很大，而我们在res中只使用到了a变量的值，因此，在闭包返回前我们可以将其它变量释放
+
+*/
+var f = (function(){
+    var a = {name:"var3"};
+    var b = ["var1","var2"];
+    var c = document.getElementByTagName("li");
+    //****其它变量
+    //***一些运算
+    b = c = null;//释放内存
+    var res = function(){
+        alert(a.name);
+    }
+    return res;
+})()
+
+
+</script>
+  <pre>
+uniqueID = function(){
+	var me = arguments.callee;
+	if(!me.id) me.id =0 ;
+	return me.id++;
+}
+uniqueID2 = function(){
+	var id = 0;
+	return function(){
+		return id++;
+	};
+
+}
+
+ </pre>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>闭包的用法</title>
+
+
+</head>
+<body>
+<script>
+uniqueID = function(){
+	var me = arguments.callee;
+	if(!me.id) me.id =0 ;
+	return me.id++;
+}
+uniqueID2 = function(){
+	var id = 0;
+	return function(){
+		return id++;
+	};
+
+}
+
+</script>
+ 
+
+</body>
+</html>
