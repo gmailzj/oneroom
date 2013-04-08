@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>bind-args用法</title>
+
+
+</head>
+<body>
+<p id="nv"><a href="http://news.baidu.com">新闻</a>
+	<a href="http://tieba.baidu.com">贴吧</a> <a href="http://zhidao.baidu.com">知道</a>
+	<a href="http://music.baidu.com">音乐</a> <a href="http://image.baidu.com">图片</a>
+	<a href="http://video.baidu.com">视频</a> <a href="http://map.baidu.com">地图</a>
+	<a href="http://baike.baidu.com">百科</a> <a href="http://wenku.baidu.com">文库</a>
+	<a style="font-family: \5b8b\4f53;" href="http://www.baidu.com/more/">更多&gt;&gt;</a>
+</p>	
+<script>
+//为函数绑定参数 
+function bindArguments(fn){
+    var boundArgs = arguments;
+    return function(){
+        var args = [];
+        for(var i=1, len = boundArgs.length; i<len; i++) args.push(boundArgs[i]);
+        //for(var i=1, len = arguments.length; i<len; i++) args.push(arguments[i]);
+        console.log(args);	
+        return fn.apply(this, args);    
+    }
+
+}
+
+//调用示例，点击页面中的超链接，弹出对应的索引
+ var linkArray=document.getElementsByTagName('a');
+ for(var i=0,m=linkArray.length; i<m; i++){
+     linkArray[i].onclick = bindArguments(function(){ console.log(arguments); return false; },
+      i+1, linkArray[i]);
+ }
+</script>
+ 
+
+</body>
+</html>
