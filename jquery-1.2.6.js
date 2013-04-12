@@ -478,8 +478,8 @@ jQuery.fn = jQuery.prototype = {
 	andSelf: function() {
 		return this.add( this.prevObject );//将之前的引用对象加入到当前的集合中
 	},
-
-	data: function( key, value ){//实例方法
+	//如果jQuery集合指向多个元素，取值操作将只返回第一个元素的对应数据
+	data: function( key, value ){//实例方法 ,返回元素上储存的相应名字的数据
 		var parts = key.split(".");
 		parts[1] = parts[1] ? "." + parts[1] : "";
 
@@ -700,7 +700,7 @@ jQuery.extend({
 			jQuery.cache[ id ] = {};//新建一个值为{}的id属性
 
 		// Prevent overriding the named cache with undefined values
-		if ( data !== undefined )
+		if ( data !== undefined )//赋值
 			jQuery.cache[ id ][ name ] = data;//保存name和data到cache中
 
 		// Return the named cache data, or the ID for the element
@@ -2032,32 +2032,41 @@ jQuery.event = {
 		}
 	},
 
-	trigger: function(type, data, elem, donative, extra) {//event
+	//exclusive；独占的意思
+	trigger: function(type, data, elem, donative, extra) {//静态方法
+
+		//donative为false 表示不触发浏览器事件默认行为，只执行事件函数
+		console.log(arguments);
 		// Clone the incoming data, if any
 		data = jQuery.makeArray(data);
 
-		if ( type.indexOf("!") >= 0 ) {
+		if ( type.indexOf("!") >= 0 ) {//找到！的话
 			type = type.slice(0, -1);
 			var exclusive = true;
 		}
-
+		//console.log(type);
 		// Handle a global trigger
-		if ( !elem ) {
+		if ( !elem ) {//元素为假，没有提供元素，绑定的是全局
 			// Only trigger if we've ever bound an event for it
+			//这里的this默认值是jQuery.event
 			if ( this.global[type] )
 				jQuery("*").add([window, document]).trigger(type, data);
 
 		// Handle triggering a single element
-		} else {
+		} else {//元素为真
 			// don't do events on text and comment nodes
+			//节点类型为3或者8不触发事件
 			if ( elem.nodeType == 3 || elem.nodeType == 8 )
 				return undefined;
 
+			//如果data参数
 			var val, ret, fn = jQuery.isFunction( elem[ type ] || null ),
 				// Check to see if we need to provide a fake event, or not
 				event = !data[0] || !data[0].preventDefault;
 
+			console.log(event);	
 			// Pass along a fake event
+			//伪造event对象
 			if ( event ) {
 				data.unshift({
 					type: type,
@@ -2285,7 +2294,11 @@ jQuery.event = {
 	}
 };
 
+//拓展jQuery实例对象的事件绑定操作方法
+//&&的用法找到第1个返回false的值,如果都为真，返回最后一个
+//||的用法找到第1个返回true的值,如果都为false，返回最后一个
 jQuery.fn.extend({
+	//为每一个匹配元素的特定事件（像click）绑定一个事件处理器函数。
 	bind: function( type, data, fn ) {
 		return type == "unload" ? this.one(type, data, fn) : this.each(function(){
 			jQuery.event.add( this, type, fn || data, fn && data );
@@ -2308,13 +2321,22 @@ jQuery.fn.extend({
 		});
 	},
 
-	trigger: function( type, data, fn ) {
+	trigger: function( type, data, fn ) {//实例方法
+		//链式调用
 		return this.each(function(){//遍历
+			//console.log(data);
 			jQuery.event.trigger( type, data, this, true, fn );
 		});
 	},
 
+	/*	triggerHandler
+		* 第一，他不会触发浏览器默认事件。 
+		* 第二，只触发jQuery对象集合中第一个元素的事件处理函数。 
+		* 第三，这个方法的返回的是事件处理函数的返回值，而不是具有可链性的jQuery对象
+	*/
 	triggerHandler: function( type, data, fn ) {
+		//console.log(type);
+		//第4个参数设置为false, 阻止执行浏览器默认处理方法
 		return this[0] && jQuery.event.trigger( type, data, this[0], false, fn );
 	},
 
@@ -2449,11 +2471,14 @@ function bindReady(){
 	jQuery.event.add( window, "load", jQuery.ready );
 }
 
+//jQuery实例对象事件绑定
 jQuery.each( ("blur,focus,load,resize,scroll,unload,click,dblclick," +
 	"mousedown,mouseup,mousemove,mouseover,mouseout,change,select," +
 	"submit,keydown,keypress,keyup,error").split(","), function(i, name){
 
-	// Handle event binding
+	// Handle event binding  
+	//拓展jQuery对象的事件处理，如果提供了fn函数(事件处理函数)，执行fn(比如jQuery('#id').click(fn))，否则
+	//触发元素的对应事件,比如：jQuery('#id').click();
 	jQuery.fn[name] = function(fn){
 		return fn ? this.bind(name, fn) : this.trigger(name);
 	};
