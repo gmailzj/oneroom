@@ -17,37 +17,57 @@
 </div>
 <button id="old">.trigger("focus")</button>
 <button id="new">.triggerHandler("focus")</button><br/><br/>
-<input type="text" value="To Be Focused"/>
+<input type="text" value="To Be Focused" id='input'/>
 <p>段落1</p>
+
+<div>
+	<input type='text' id='username' />
+</div>
+<pre>
+<div>
+1 elem.data("key",'2012');
+ 赋值return this.trigger("setData" + parts[1] + "!", [parts[0], value]).each(function(){
+				jQuery.data( this, key, value );
+			});
+2this.trigger(type, data, fn ) 实例方法 return this.each(function(){//遍历
+			//console.log(data);
+			jQuery.event.trigger( type, data, this, true, fn ); //写死为true
+		});
+3jQuery.event.trigger
+</div>
+</pre>
 <script>
 var elem = $("#nav");
 var elem = $("li");
 //debugger
 elem  = elem.eq(0);
-elem.data("key.id",'2012');
-elem.attr("clickflag","b123");
-elem.data("key.id");
 
+/*
+elem.data("key.id",'2012');
+elem.data("key.id");
+*/
+//elem.data("handle",function(){console.log('data-handle')});
 elem.data("key",'2012');
-elem.attr("clickflag","b123");
+//elem.data("handle");
 elem.data("key");
 
 /*trigger*/
 $("#old").click(function(){
-  $("input").trigger("focus");
+  $("#input").trigger("focus");
 });
 $("#new").click(function(){
-  $("input").triggerHandler("focus");
+  $("#input").triggerHandler("focus");
 });
-$("input").focus(function(){
-  $("<span>Focused!</span>").appendTo("body").fadeOut(1000);
+$("#input").focus(function(e){
+  console.log(e);
+  $("<span>Focused!</span>").prependTo("body").fadeOut(1000);
 }); 
 
 $("p").click( function (event, a, b) {
   // 一个普通的点击事件时，a和b是undefined类型
   // 如果用下面的语句触发，可以传递参数，那么a指向"foo",而b指向"bar"
-  //console.log(arguments);
-} ).trigger("click", ["foo", "bar"]);
+  console.log(arguments);
+} )//.trigger("click", ["foo", "bar"]);
 
 </script>
 </body>

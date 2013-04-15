@@ -357,7 +357,8 @@ jQuery.fn = jQuery.prototype = {
 		});
 	},
 
-	add: function( selector ) {
+	//把与表达式匹配的元素添加到jQuery对象中。这个函数可以用于连接分别与两个表达式匹配的元素结果集
+	add: function( selector ) {//实例方法
 		return this.pushStack( jQuery.unique( jQuery.merge(
 			this.get(),
 			typeof selector == 'string' ?
@@ -365,7 +366,7 @@ jQuery.fn = jQuery.prototype = {
 				jQuery.makeArray( selector )
 		)));
 	},
-
+	//是否
 	is: function( selector ) {
 		return !!selector && jQuery.multiFilter( selector, this ).length > 0;
 	},
@@ -417,8 +418,9 @@ jQuery.fn = jQuery.prototype = {
 			}
 
 			return undefined;
-		}
+		}//取值结束
 
+		//开始赋值
 		if( value.constructor == Number )
 			value += '';//转换成字符串
 
@@ -485,17 +487,22 @@ jQuery.fn = jQuery.prototype = {
 
 		if ( value === undefined ) {//取值，取第1个
 			var data = this.triggerHandler("getData" + parts[1] + "!", [parts[0]]);
-
+			//console.log(data);
 			if ( data === undefined && this.length )
 				data = jQuery.data( this[0], key );//只返回第1个元素的值，静态方法
-
+			console.log(data);
 			return data === undefined && parts[1] ?
-				this.data( parts[0] ) ://实例方法
+				this.data( parts[0] ) ://实例方法,递归调用自身
 				data;
-		} else//赋值，多个
+		} else{//赋值，多个 
+			//console.log(this.trigger("setData" + parts[1] + "!", [parts[0], value]));
 			return this.trigger("setData" + parts[1] + "!", [parts[0], value]).each(function(){
 				jQuery.data( this, key, value );
 			});
+
+		}
+
+
 	},
 
 	removeData: function( key ){//遍历取出数据缓存key
@@ -690,6 +697,7 @@ jQuery.extend({
 
 		var id = elem[ expando ];//expando = "jQuery" + now() 
 
+		//console.log(arguments);
 		// Compute a unique ID for the element
 		if ( !id ) //elem是否已经存在这个expando属性
 			id = elem[ expando ] = ++uuid;//设置一个唯一自增id，uuid初始值是0
@@ -2039,7 +2047,7 @@ jQuery.event = {
 		console.log(arguments);
 		// Clone the incoming data, if any
 		data = jQuery.makeArray(data);
-
+		//console.log(data);
 		if ( type.indexOf("!") >= 0 ) {//找到！的话
 			type = type.slice(0, -1);
 			var exclusive = true;
@@ -2060,43 +2068,60 @@ jQuery.event = {
 				return undefined;
 
 			//如果data参数
+			//console.log(elem.constructor);
+			//这里elem是dom对象，不是jQuery对象
+			//fn表示的是元素的click(举例，其实是type参数)是不是函数
 			var val, ret, fn = jQuery.isFunction( elem[ type ] || null ),
 				// Check to see if we need to provide a fake event, or not
 				event = !data[0] || !data[0].preventDefault;
 
-			console.log(event);	
+			//console.log(event);	
 			// Pass along a fake event
 			//伪造event对象
+			//console.log(data);
+
 			if ( event ) {
-				data.unshift({
+				//console.log('event true');
+				data.unshift({//从数组前面插入一项
 					type: type,
 					target: elem,
 					preventDefault: function(){},
 					stopPropagation: function(){},
 					timeStamp: now()
 				});
+
 				data[0][expando] = true; // no need to fix fake event
 			}
-
+			//console.log(data[0]);
 			// Enforce the right trigger type
-			data[0].type = type;
+
 			if ( exclusive )
 				data[0].exclusive = true;
 
 			// Trigger the event, it is assumed that "handle" is a function
+			//如果elem有设置handle这个值(elem.data('handle',function))
 			var handle = jQuery.data(elem, "handle");
 			if ( handle )
 				val = handle.apply( elem, data );
+			console.log(fn);
 
+
+			//console.log(elem["on"+type]);
+			//fn是否是函数 native code 函数
 			// Handle triggering native .onfoo handlers (and on links since we don't call .click() for links)
+
+			//如果fn不是函数或者是a节点同时是click同时
 			if ( (!fn || (jQuery.nodeName(elem, 'a') && type == "click")) && elem["on"+type] && elem["on"+type].apply( elem, data ) === false )
 				val = false;
 
 			// Extra functions don't get the custom event object
+			//console.log(data)
 			if ( event )
-				data.shift();
+				data.shift();//删除第1个,伪事件
+			//console.log(data)
 
 			// Handle triggering of extra function
+			//调用函数 比如elem.trigger('click', data, callback)，如果提供了第3个参数此时extra=callback
 			if ( extra && jQuery.isFunction( extra ) ) {
 				// call the extra function and tack the current return value on the end for possible inspection
 				ret = extra.apply( elem, val == null ? data : data.concat( val ) );
@@ -2106,9 +2131,11 @@ jQuery.event = {
 			}
 
 			// Trigger the native events (except for clicks on links)
+			//donative为false 表示不触发浏览器事件默认行为，只执行事件函数
 			if ( fn && donative !== false && val !== false && !(jQuery.nodeName(elem, 'a') && type == "click") ) {
 				this.triggered = true;
 				try {
+					console.log(elem[ type ]);
 					elem[ type ]();
 				// prevent IE from throwing an error for some hidden elements
 				} catch (e) {}
