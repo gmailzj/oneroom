@@ -170,9 +170,9 @@ jQuery.fn = jQuery.prototype = {
 		if ( name.constructor == String )//字符串
 			if ( value === undefined )//取值一般取第1个元素,退出函数
 				// return  a && b 的用法：  1, a真 返回b  2，a假，返回a
- 				return this[0] && jQuery[ type || "attr" ]( this[0], name );//返回第1个元素的属性；中括号用法，相当于.attr
+ 				return this[0] && jQuery[ type || "attr" ]( this[0], name );//返回第1个元素的属性；中括号用法，相当于.attr，jQuery静态方法
 
-			else {
+			else {//赋值初始化
 				options = {};
 				options[ name ] = value;
 			}
@@ -333,7 +333,7 @@ jQuery.fn = jQuery.prototype = {
 		return ret;
 	},
 
-	filter: function( selector ) {
+	filter: function( selector ) {//实例方法
 		return this.pushStack(
 			jQuery.isFunction( selector ) &&
 			jQuery.grep(this, function(elem, i){
@@ -1358,6 +1358,7 @@ jQuery.each({
 	};
 });
 
+//拓展实例对象的一些方法jQuery.fn对应其prototype
 jQuery.each({
 	removeAttr: function( name ) {
 		jQuery.attr( this, name, "" );
@@ -1391,6 +1392,9 @@ jQuery.each({
 
 	empty: function() {
 		// Remove element nodes and prevent memory leaks
+		//父元素下匹配所有的子元素
+		debugger
+		//这里的this指的是dom对象，因为jquery的each遍历的时候回调里面的fn的this对应匹配的集合其中一个的dom
 		jQuery( ">*", this ).remove();
 
 		// Remove any remaining nodes
@@ -1399,7 +1403,7 @@ jQuery.each({
 	}
 }, function(name, fn){
 	jQuery.fn[ name ] = function(){
-		return this.each( fn, arguments );
+		return this.each( fn, arguments );//this是指jquery实例对象，fn对应参数的fn，arguments是在调用比如上面empty的时候的参数
 	};
 });
 
@@ -1468,7 +1472,7 @@ jQuery.extend({
 
 			// Parent Checks
 			parent: function(a){return a.firstChild;},
-			empty: function(a){return !a.firstChild;},
+			empty: function(a){return !a.firstChild;},//内容选择器中用到
 
 			// Text Check
 			contains: function(a,i,m){return (a.textContent||a.innerText||jQuery(a).text()||"").indexOf(m[3])>=0;},
