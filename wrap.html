@@ -12,19 +12,32 @@
 </head>
 <body>
 <div id="main">
- <ul id="nav">
-	<li>1</li>
-	<li>2</li>
-	<li>3</li>
-	<li>4</li>
-</ul>
+	 <ul id="nav">
+		<li>1</li>
+		<li>2</li>
+		<li>3</li>
+		<li>4</li>
+	</ul>
 </div>
-<div><p>段落1</p></div>
+
+<p>段落1</p>
+
+<div id="t1">
+	<p>段落2</p>
+</div>
+
 <p>Test Paragraph 1.</p>
 <p>Test Paragraph 2.</p>
 <h1>WrapAll</h1>
+
 <hr/>
-<p>Hello</p><p>cruel</p><p>World</p>
+
+<div>
+	<p>Hello</p>
+	<p>cruel</p>
+	<p>World</p>
+</div>
+
 <script>
 var elem = $("#nav");
 var elem = $("li");
@@ -37,4 +50,3 @@ $("p").wrapAll("<div class='red'></div>");
 </script>
 </body>
 </html>
-<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->

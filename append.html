@@ -19,6 +19,7 @@
 	<li>4</li>
 </ul>
 </div>
+
 <div><p>段落1</p></div>
 <p>Test Paragraph 1.</p>
 <p>Test Paragraph 2.</p>
@@ -26,12 +27,13 @@
 <hr/>
 <p>Hello</p><p>cruel</p><p>World</p>
 <script>
-var elem = $("#nav");
-var elem = $("li");
+//var elem = $("#nav");
+//var elem = $("li");
 var elem = $("p")
-debugger
-elem.append("<b>Hello</b>");
+//debugger
+//elem.append("<b>Hello</b>");
+elem.appendTo("div");
+
 </script>
 </body>
 </html>
-<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->

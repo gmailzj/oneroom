@@ -203,7 +203,7 @@ jQuery.fn = jQuery.prototype = {
 		if ( typeof text != "object" && text != null )//不是object(注意typeof 数组是object)且不为null，可以是数字、字符串
 			return this.empty().append( (this[0] && this[0].ownerDocument || document).createTextNode( text ) );
 
-		//取值
+		//取值  会把所有匹配的元素的text拼接起来
 		var ret = "";
 		jQuery.each( text || this, function(){//遍历匹配到的jQuery对象
 			jQuery.each( this.childNodes, function(){//遍历每一个对象的子节点
@@ -252,14 +252,14 @@ jQuery.fn = jQuery.prototype = {
 	append: function() {//
 		return this.domManip(arguments, true, false, function(elem){
 			if (this.nodeType == 1)//这里的this是dom，不是jQuery对象
-				this.appendChild( elem );
+				this.appendChild( elem );//在最后的节点添加
 		});
 	},
 
 	prepend: function() {
 		return this.domManip(arguments, true, true, function(elem){
 			if (this.nodeType == 1)
-				this.insertBefore( elem, this.firstChild );
+				this.insertBefore( elem, this.firstChild );//在最前面(第1个节点)添加
 		});
 	},
 
@@ -279,7 +279,7 @@ jQuery.fn = jQuery.prototype = {
 		return this.prevObject || jQuery( [] );
 	},
 
-	find: function( selector ) {
+	find: function( selector ) {//实例函数
 		var elems = jQuery.map(this, function(elem){
 			return jQuery.find( selector, elem );
 		});
@@ -800,7 +800,7 @@ jQuery.extend({
 			value;
 	},
 
-	className: {
+	className: {//jQuery.className静态方法
 		// internal only, use addClass("class")
 		add: function( elem, classNames ) {
 			//classNames可能是包含空格的多个class
@@ -1178,7 +1178,7 @@ jQuery.extend({
 				"";
 		}
 
-		//类似absolute-size 转换为 fontSize； js访问样式的属性时需要转换
+		//类似font-size 转换为 fontSize； js访问样式的属性时需要转换
 		name = name.replace(/-([a-z])/ig, function(all, letter){
 			return letter.toUpperCase();
 		});
@@ -1243,7 +1243,7 @@ jQuery.extend({
 		try {
 
 			for ( var i = 0, length = array.length; i < length; i++ ) {
-				var id = jQuery.data( array[ i ] );
+				var id = jQuery.data( array[ i ] );//每个元素都有一个自增的uuid作为返回值
 
 				if ( !done[ id ] ) {//是否已经有了，没有说明是新值，push进去
 					done[ id ] = true;
@@ -1341,6 +1341,7 @@ jQuery.each({
 	};
 });
 
+//拓展实例的方法
 jQuery.each({
 	appendTo: "append",
 	prependTo: "prepend",
@@ -1351,6 +1352,8 @@ jQuery.each({
 	jQuery.fn[ name ] = function() {
 		var args = arguments;
 
+		//原理：$('p').appendTo('div'), 将参数做选择器，然后执行appendTo对应的append方法，参数是this
+		//也就是调换顺序 $('div').append($('p'));
 		return this.each(function(){
 			for ( var i = 0, length = args.length; i < length; i++ )
 				jQuery( args[ i ] )[ original ]( this );
@@ -1361,9 +1364,9 @@ jQuery.each({
 //拓展实例对象的一些方法jQuery.fn对应其prototype
 jQuery.each({
 	removeAttr: function( name ) {
-		jQuery.attr( this, name, "" );
+		jQuery.attr( this, name, "" );//先清空
 		if (this.nodeType == 1)
-			this.removeAttribute( name );
+			this.removeAttribute( name );//删除
 	},
 
 	addClass: function( classNames ) {
@@ -1535,7 +1538,7 @@ jQuery.extend({
 		return cur;
 	},
 
-	find: function( t, context ) {
+	find: function( t, context ) {//静态函数
 		// Quickly handle non-string expressions
 		if ( typeof t != "string" )
 			return [ t ];
@@ -1739,7 +1742,7 @@ jQuery.extend({
 		return tmp;
 	},
 
-	filter: function(t,r,not) {
+	filter: function(t,r,not) {//静态函数
 		var last;
 
 		// Look for common filter expressions
