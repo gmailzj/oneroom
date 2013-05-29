@@ -148,6 +148,16 @@ function MyRound(n,precision){
 //javascript num.toFixed方法，只能用于数字变量，不能直接用数字调用
 
 /**字符串功能拓展**/
+String.prototype.hasChinese = function() {
+    return /[^\u00-\uff]/g.test(this);
+}
+String.prototype.onlyChinese = function() {
+    return /^[\u0391-\uffe5]+$/g.test(this);
+}
+String.prototype.bytes = function() {
+    return this.replace(/[^\x00-\xff]/gi, 'xx').length;
+}
+
 String.prototype.getBytes = function() {
     var bytes = 0;
     for (var i = 0; i < this.length; i++) {
@@ -185,6 +195,12 @@ String.prototype.intercept = function(length, appendStr) {
     return str.substr(0, charCount) + appendStr;
 
 };
+String.prototype.lTrim = function() {
+    return this.replace(/^\s*/, "");
+}
+String.prototype.rTrim = function() {
+    return this.replace(/\s*$/, "");
+}
 String.prototype.trim = function() {
     return this.replace(/^\s*|\s*$/g, "");
 
@@ -349,8 +365,67 @@ Class.extend(String.prototype, {
 });
 
 
+var Cookie = {
+    setCookie: function(name, value, expires, path, domain, secure)
+    {
 
-
+        document.cookie = name + "=" + escape(value) + 
+        ((expires) ? "; expires=" + expires.toGMTString() : "") + 
+        ((path) ? "; path=" + path: "; path=/") + 
+        ((domain) ? "; domain=" + domain: "; domain=kankan.com") + 
+        ((secure) ? "; secure": "");
+    },
+    getCookie: function(name)
+    {
+        var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+        if (arr != null)
+        {
+            return unescape(arr[2]);
+        }
+        return null;
+    },
+    clearCookie: function(name, path, domain)
+    {
+        if (Cookie.getCookie(name))
+        {
+            document.cookie = name + "=" + 
+            ((path) ? "; path=" + path: "; path=/") + 
+            ((domain) ? "; domain=" + domain: "; domain=kankan.com") + ";expires=Fri, 02-Jan-1970 00:00:00 GMT";
+        }
+    },
+    clearAnyway: function(name, path, domain)
+    {
+        document.cookie = name + "=" + 
+        ((path) ? "; path=" + path: "; path=/") + 
+        ((domain) ? "; domain=" + domain: "; domain=kankan.com") + ";expires=Fri, 02-Jan-1970 00:00:00 GMT";
+    }
+};
+window.setRunTimeout = function(fn, dt)
+ {
+    if (typeof(fn) != 'function') return false;
+    var p = new Array();
+    if (arguments.length > 2)
+    {
+        for (var i = 2; i < arguments.length; i++) p[i - 2] = arguments[i];
+    }
+    var f = function() {
+        fn.apply(null, p)
+    }
+    return window.setTimeout(f, dt);
+}
+window.setRunInterval = function(fn, dt)
+ {
+    if (typeof(fn) != 'function') return false;
+    var p = new Array();
+    if (arguments.length > 2)
+    {
+        for (var i = 2; i < arguments.length; i++) p[i - 2] = arguments[i];
+    }
+    var f = function() {
+        fn.apply(null, p)
+    }
+    return window.setInterval(f, dt);
+}
 
 
 var KK = KK || {
