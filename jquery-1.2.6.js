@@ -51,11 +51,12 @@ jQuery.fn = jQuery.prototype = {
 			if ( match && (match[1] || !context) ) {
 
 				// HANDLE: $(html) -> $(array)
-				if ( match[1] )//第2种情况 $("<div>1</div>")
+				if ( match[1] ){//第2种情况 $("<div>1</div>")
 					selector = jQuery.clean( [ match[1] ], context );
+					console.log(selector);
 
 				// HANDLE: $("#id")
-				else {//第3种情况
+				} else {//第3种情况
 					var elem = document.getElementById( match[3] );//类似jQuery("#btn")
 
 					// Make sure an element was located
@@ -64,7 +65,7 @@ jQuery.fn = jQuery.prototype = {
 						// by name instead of ID
 						//IE通过document.getElementById也会返回name=id的元素，没有id也能返回真
 						if ( elem.id != match[3] )
-							return jQuery().find( selector );
+							return jQuery().find( selector );//jQuery()为空时候默认为document
 
 						// Otherwise, we inject the element directly into the jQuery object
 						return jQuery( elem );//转化DOM为jQuery对象
@@ -83,7 +84,8 @@ jQuery.fn = jQuery.prototype = {
 			//js中属性可以用.attr来访问，也可以用['attr']来访问
 			//根据jQuery.fn.ready是true还是false，执行jQuery( document ).ready(selector)或者是jQuery( document ).load(selector)
 			return jQuery( document )[ jQuery.fn.ready ? "ready" : "load" ]( selector );
-		}	
+		}
+		console.log(selector);
 		return this.setArray(jQuery.makeArray(selector));//先变成伪数组(循环取值)，然后变成数组(通过Array.prototype.push.call或者apply)
 	},
 
@@ -2374,7 +2376,7 @@ jQuery.fn.extend({
 		return this[0] && jQuery.event.trigger( type, data, this[0], false, fn );
 	},
 
-	toggle: function( fn ) {
+	toggle: function( fn ) {//实例方法
 		// Save reference to arguments for access in closure
 		var args = arguments, i = 1;
 
@@ -2394,11 +2396,11 @@ jQuery.fn.extend({
 		}));
 	},
 
-	hover: function(fnOver, fnOut) {
+	hover: function(fnOver, fnOut) {//实例方法
 		return this.bind('mouseenter', fnOver).bind('mouseleave', fnOut);
 	},
 
-	ready: function(fn) {
+	ready: function(fn) {//实例方法
 		// Attach the listeners
 		bindReady();
 
