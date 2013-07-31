@@ -53,7 +53,7 @@ jQuery.fn = jQuery.prototype = {
 				// HANDLE: $(html) -> $(array)
 				if ( match[1] ){//第2种情况 $("<div>1</div>")
 					selector = jQuery.clean( [ match[1] ], context );
-					console.log(selector);
+					//console.log(selector);
 
 				// HANDLE: $("#id")
 				} else {//第3种情况
@@ -85,7 +85,7 @@ jQuery.fn = jQuery.prototype = {
 			//根据jQuery.fn.ready是true还是false，执行jQuery( document ).ready(selector)或者是jQuery( document ).load(selector)
 			return jQuery( document )[ jQuery.fn.ready ? "ready" : "load" ]( selector );
 		}
-		console.log(selector);
+		//console.log(selector);
 		return this.setArray(jQuery.makeArray(selector));//先变成伪数组(循环取值)，然后变成数组(通过Array.prototype.push.call或者apply)
 	},
 
@@ -1901,7 +1901,16 @@ jQuery.event = {
 
 	// Bind an event to an element
 	// Original by Dean Edwards
+	//
+	/*
+		bind: function( type, data, fn ) 
+	jQuery.event.add( this, type, fn || data, fn && data );
+	//这里有个技巧 fn为函数时为真，这个时候传递fn给handler，data给data，
+	//如果fn为假(data为函数，fn没有传),这个时候传递data函数给handle，undefined给data
+	elem  dom对象
+	*/
 	add: function(elem, types, handler, data) {
+		//console.log(arguments);
 		if ( elem.nodeType == 3 || elem.nodeType == 8 )
 			return;
 
@@ -1911,21 +1920,35 @@ jQuery.event = {
 			elem = window;
 
 		// Make sure that the function being executed has a unique ID
+		//确保每个处理函数都有个唯一的id
+		console.log(this);//对应jQuery.event对象
 		if ( !handler.guid )
 			handler.guid = this.guid++;
 
 		// if data is passed, bind to handler
+		//如果传递了data参数
 		if( data != undefined ) {
+			console.log('传递数据data');
 			// Create temporary function pointer to original handler
 			var fn = handler;
 
 			// Create unique handler function, wrapped around original handler
+			/*
+				proxy: function( fn, proxy ){
+					// Set the guid of unique handler to the same of original handler, so it can be removed
+					proxy.guid = fn.guid = fn.guid || proxy.guid || this.guid++;
+					// So proxy can be declared as an argument
+					return proxy;
+				},
+			*/
 			handler = this.proxy( fn, function() {
 				// Pass arguments and context to original handler
+				console.log(arguments);
 				return fn.apply(this, arguments);
 			});
 
 			// Store data in unique handler
+			//存储data数据
 			handler.data = data;
 		}
 
@@ -1934,12 +1957,14 @@ jQuery.event = {
 			handle = jQuery.data(elem, "handle") || jQuery.data(elem, "handle", function(){
 				// Handle the second event of a trigger and when
 				// an event is called after a page has unloaded
+				console.log('callee',arguments.callee.elem);
 				if ( typeof jQuery != "undefined" && !jQuery.event.triggered )
 					return jQuery.event.handle.apply(arguments.callee.elem, arguments);
 			});
 		// Add elem as a property of the handle function
 		// This is to prevent a memory leak with non-native
 		// event in IE.
+		console.log('handle:',handle);
 		handle.elem = elem;
 
 		// Handle multiple events separated by a space
@@ -2053,7 +2078,7 @@ jQuery.event = {
 	trigger: function(type, data, elem, donative, extra) {//静态方法
 
 		//donative为false 表示不触发浏览器事件默认行为，只执行事件函数
-		console.log(arguments);
+		//console.log(arguments);
 		// Clone the incoming data, if any
 		data = jQuery.makeArray(data);
 		//console.log(data);
@@ -2266,6 +2291,15 @@ jQuery.event = {
 		return event;
 	},
 
+	/*
+	jQuery.event.add中的
+	var fn = handler;
+	handler = this.proxy( fn, function() {
+				// Pass arguments and context to original handler
+				return fn.apply(this, arguments);
+			});
+
+	*/
 	proxy: function( fn, proxy ){
 		// Set the guid of unique handler to the same of original handler, so it can be removed
 		proxy.guid = fn.guid = fn.guid || proxy.guid || this.guid++;
@@ -2336,11 +2370,20 @@ jQuery.event = {
 jQuery.fn.extend({
 	//为每一个匹配元素的特定事件（像click）绑定一个事件处理器函数。
 	bind: function( type, data, fn ) {
+		console.log(this);//指的是jQuery对象(new jQuery.fn.jQuery.init产生的对象)
+		/*
+			事件处理函数fn会接收到一个事件对象，可以通过它来阻止（浏览器）默认的行为。
+			如果既想取消默认的行为，又想阻止事件起泡，这个事件处理函数fn必须返回false。
+			1 return false 		 //阻止冒泡和默认行为
+			2 e.preventDefault() //阻止默认
+			3 e.stopPropagation  //阻止冒泡
+		*/
 		return type == "unload" ? this.one(type, data, fn) : this.each(function(){
+			console.log(this);//指的触发事件的元素
 			jQuery.event.add( this, type, fn || data, fn && data );
 		});
 	},
-
+	//为每一个匹配元素的特定事件（像click）绑定一个一次性的事件处理函数。
 	one: function( type, data, fn ) {
 		var one = jQuery.event.proxy( fn || data, function(event) {
 			jQuery(this).unbind(event, one);
