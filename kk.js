@@ -45,6 +45,25 @@ var t = bindF(o,f)
 t(5,6);//返回 dd5
 
 */
+//打印js运行错误
+window.onerror = function(){
+    
+    var errorMsg = '';
+    for(var i=0; i<arguments.length; i++){
+        var reportString='';
+        arguments[i] = arguments[i].toString();
+        reportString = arguments[i];
+        errorMsg += (reportString)+'\r\n';
+    }
+
+    try{
+        console && console.log(errorMsg) ;
+        
+    }catch(e){}
+    
+    return true;
+    
+}
 //返回对象的key集合
 function getPropertyNames(o){
     var r=[];
