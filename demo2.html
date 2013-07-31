@@ -7,7 +7,7 @@
 </head>
 <body>
 <ul id="nav">
-	<li>1</li>
+	<li><a href="http://www.baidu.com" target="_blank">baidu</a></li>
 	<li>2</li>
 	<li>3</li>
 	<li>4</li>
@@ -16,9 +16,41 @@
 <script type="text/javascript">
 var text = $("li").text();
 
-$("<div>demo</div>").appendTo("#nav")
-$("<div/>").appendTo("#nav")
-jQuery().find( '#nav' )
+
+function proxy(fn, proxy){
+
+	return  proxy;
+}
+var handler = function (){
+
+	console.log('回调',arguments);
+	~function(){console.log('参数内部',arguments);}();
+}
+var fn = handler;
+handler = proxy(fn, function(){
+
+	return fn.apply(this, arguments);
+})
+
+console.log(handler);
+
+$("<div>demo</div>").appendTo("#nav");
+$("<div/>").appendTo("#nav");
+
+/*
+$('#nav li').bind('click',{a:1,b:2},function(e){
+	console.log(e.data.a);
+	console.log('li clicked');
+});
+*/
+$('#nav li a').bind('click',function(e){
+	console.log('li a clicked'); 
+	//return false;
+	e.stopPropagation();
+	e.preventDefault();
+});
+
+$('#nav').bind('click',{a:1,b:2},fn);
 </script>
 
  
