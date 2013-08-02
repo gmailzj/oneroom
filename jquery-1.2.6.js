@@ -632,7 +632,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 	return target;
 };
 
-//闭包
+//闭包 now() = return +new Date;
 var expando = "jQuery" + now(), uuid = 0, windowData = {},
 	// exclude the following css properties to add px
 	exclude = /z-?index|font-?weight|opacity|zoom|line-?height/i,
@@ -1921,14 +1921,14 @@ jQuery.event = {
 
 		// Make sure that the function being executed has a unique ID
 		//确保每个处理函数都有个唯一的id
-		console.log(this);//对应jQuery.event对象
+		//console.log(this);//对应jQuery.event对象
 		if ( !handler.guid )
 			handler.guid = this.guid++;
 
 		// if data is passed, bind to handler
 		//如果传递了data参数
 		if( data != undefined ) {
-			console.log('传递数据data');
+			//console.log('传递数据data');
 			// Create temporary function pointer to original handler
 			var fn = handler;
 
@@ -1943,7 +1943,7 @@ jQuery.event = {
 			*/
 			handler = this.proxy( fn, function() {
 				// Pass arguments and context to original handler
-				console.log(arguments);
+				console.log(arguments);//指的封装后的事件对象，平时的e或者event
 				return fn.apply(this, arguments);
 			});
 
@@ -1952,30 +1952,41 @@ jQuery.event = {
 			handler.data = data;
 		}
 
+		/*
+		jQuery.data(elem, "address") || jQuery.data(elem, "address", function(){
+			console.log('address');
+		});*/
+
 		// Init the element's event structure
 		var events = jQuery.data(elem, "events") || jQuery.data(elem, "events", {}),
 			handle = jQuery.data(elem, "handle") || jQuery.data(elem, "handle", function(){
 				// Handle the second event of a trigger and when
 				// an event is called after a page has unloaded
-				console.log('callee',arguments.callee.elem);
-				if ( typeof jQuery != "undefined" && !jQuery.event.triggered )
+				console.log('callee',arguments);//MouseEvent对象
+				//console.log(typeof event.triggered);
+				if ( typeof jQuery != "undefined" && !jQuery.event.triggered ){
 					return jQuery.event.handle.apply(arguments.callee.elem, arguments);
+				}
+					
 			});
 		// Add elem as a property of the handle function
 		// This is to prevent a memory leak with non-native
 		// event in IE.
-		console.log('handle:',handle);
+		//console.log('handle:',handle);
 		handle.elem = elem;
 
 		// Handle multiple events separated by a space
 		// jQuery(...).bind("mouseover mouseout", fn);
+		//绑定多个事件的时候 用空格分隔多个事件
 		jQuery.each(types.split(/\s+/), function(index, type) {
 			// Namespaced event handlers
 			var parts = type.split(".");
 			type = parts[0];
+			//console.log(parts[1]);
 			handler.type = parts[1];
 
 			// Get the current list of functions bound to this event
+
 			var handlers = events[type];
 
 			// Init the event handler queue
@@ -1987,6 +1998,8 @@ jQuery.event = {
 				// events handler returns false
 				if ( !jQuery.event.special[type] || jQuery.event.special[type].setup.call(elem) === false ) {
 					// Bind the global event handler to the element
+					//console.log(type, handle);
+					//绑定事件处理函数
 					if (elem.addEventListener)
 						elem.addEventListener(type, handle, false);
 					else if (elem.attachEvent)
@@ -1995,10 +2008,14 @@ jQuery.event = {
 			}
 
 			// Add the function to the element's handler list
-			handlers[handler.guid] = handler;
+			//添加到这个元素的某事件(比如click)到handlers队列
+			//上面的代码
+			//var events = jQuery.data(elem, "events")
+			//var handlers = events[type]; 
+			handlers[handler.guid] = handler;//保存到元素的events属性的type属性的唯一id
 
 			// Keep track of which events have been used, for global triggering
-			jQuery.event.global[type] = true;
+			jQuery.event.global[type] = true;// 保存到全局
 		});
 
 		// Nullify elem to prevent memory leaks in IE
@@ -2025,7 +2042,7 @@ jQuery.event = {
 				// types is actually an event object here
 				if ( types.type ) {
 					handler = types.handler;
-					types = types.type;
+					types = types.type;//
 				}
 
 				// Handle multiple events seperated by a space
@@ -2181,10 +2198,24 @@ jQuery.event = {
 		return val;
 	},
 
+	/*
+	function(){
+				// Handle the second event of a trigger and when
+				// an event is called after a page has unloaded
+				console.log('callee',arguments);//MouseEvent对象
+				//console.log(typeof event.triggered);
+				if ( typeof jQuery != "undefined" && !jQuery.event.triggered ){
+					return jQuery.event.handle.apply(arguments.callee.elem, arguments);
+				}
+					
+			}
+
+	*/
 	handle: function(event) {
 		// returned undefined or false
 		var val, ret, namespace, all, handlers;
-
+		//console.log(event);
+		//event 代表事件参数
 		event = arguments[0] = jQuery.event.fix( event || window.event );
 
 		// Namespaced event handlers
@@ -2236,6 +2267,7 @@ jQuery.event = {
 		// Mark it as fixed
 		event[expando] = true;
 
+		//拓展事件的冒泡和阻止默认行为的函数
 		// add preventDefault and stopPropagation since
 		// they will not work on the clone
 		event.preventDefault = function() {
@@ -2370,7 +2402,7 @@ jQuery.event = {
 jQuery.fn.extend({
 	//为每一个匹配元素的特定事件（像click）绑定一个事件处理器函数。
 	bind: function( type, data, fn ) {
-		console.log(this);//指的是jQuery对象(new jQuery.fn.jQuery.init产生的对象)
+		//console.log(this);//指的是jQuery对象(new jQuery.fn.jQuery.init产生的对象)
 		/*
 			事件处理函数fn会接收到一个事件对象，可以通过它来阻止（浏览器）默认的行为。
 			如果既想取消默认的行为，又想阻止事件起泡，这个事件处理函数fn必须返回false。
@@ -2379,7 +2411,7 @@ jQuery.fn.extend({
 			3 e.stopPropagation  //阻止冒泡
 		*/
 		return type == "unload" ? this.one(type, data, fn) : this.each(function(){
-			console.log(this);//指的触发事件的元素
+			//console.log(this);//指的触发事件的元素
 			jQuery.event.add( this, type, fn || data, fn && data );
 		});
 	},

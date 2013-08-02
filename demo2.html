@@ -16,7 +16,7 @@
 <script type="text/javascript">
 var text = $("li").text();
 
-
+/*
 function proxy(fn, proxy){
 
 	return  proxy;
@@ -32,7 +32,8 @@ handler = proxy(fn, function(){
 	return fn.apply(this, arguments);
 })
 
-console.log(handler);
+//console.log(handler);
+*/
 
 $("<div>demo</div>").appendTo("#nav");
 $("<div/>").appendTo("#nav");
@@ -50,7 +51,28 @@ $('#nav li a').bind('click',function(e){
 	e.preventDefault();
 });
 
-$('#nav').bind('click',{a:1,b:2},fn);
+$('#nav li a').bind('click',function(e){
+	console.log('第2个处理函数');
+});
+
+//console.log($('#nav li a').data('address'));
+//$('#nav').bind('click',{a:1,b:2},fn);
+
+$('#nav').get(0).onclick = function(e){
+	console.log(e);
+	
+}
+
+
+
+
+
+
+
+
+
+
+
 </script>
 
  
