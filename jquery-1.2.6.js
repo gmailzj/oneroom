@@ -1943,7 +1943,7 @@ jQuery.event = {
 			*/
 			handler = this.proxy( fn, function() {
 				// Pass arguments and context to original handler
-				console.log(arguments);//指的封装后的事件对象，平时的e或者event
+				//console.log(arguments);//指的封装后的事件对象，平时的e或者event
 				return fn.apply(this, arguments);
 			});
 
@@ -1957,9 +1957,11 @@ jQuery.event = {
 			console.log('address');
 		});*/
 
+		//console.log(jQuery.data(elem, "handle"));
+
 		// Init the element's event structure
-		var events = jQuery.data(elem, "events") || jQuery.data(elem, "events", {}),
-			handle = jQuery.data(elem, "handle") || jQuery.data(elem, "handle", function(){
+		var events = jQuery.data(elem, "events") || jQuery.data(elem, "events", {});
+		var handle = jQuery.data(elem, "handle") || jQuery.data(elem, "handle", function(){
 				// Handle the second event of a trigger and when
 				// an event is called after a page has unloaded
 				console.log('callee',arguments);//MouseEvent对象
@@ -1973,6 +1975,7 @@ jQuery.event = {
 		// This is to prevent a memory leak with non-native
 		// event in IE.
 		//console.log('handle:',handle);
+		//console.log(arguments.callee.caller)
 		handle.elem = elem;
 
 		// Handle multiple events separated by a space
@@ -2154,7 +2157,7 @@ jQuery.event = {
 			var handle = jQuery.data(elem, "handle");
 			if ( handle )
 				val = handle.apply( elem, data );
-			console.log(fn);
+			//console.log(fn);
 
 
 			//console.log(elem["on"+type]);
@@ -2215,7 +2218,7 @@ jQuery.event = {
 		// returned undefined or false
 		var val, ret, namespace, all, handlers;
 		//console.log(event);
-		//event 代表事件参数
+		//event 代表原生事件参数，通过jQuery.event.fix来拓展事件参数的值
 		event = arguments[0] = jQuery.event.fix( event || window.event );
 
 		// Namespaced event handlers
@@ -2225,9 +2228,13 @@ jQuery.event = {
 		// Cache this now, all = true means, any handler
 		all = !namespace && !event.exclusive;
 
+		//得到所有原始事件处理函数
 		handlers = ( jQuery.data(this, "events") || {} )[event.type];
 
-		for ( var j in handlers ) {
+		console.log(arguments);
+		console.log(handlers);
+
+		for ( var j in handlers ) {//遍历elem所有的click(event.type类型)的事件处理函数
 			var handler = handlers[j];
 
 			// Filter the functions by class
@@ -2235,13 +2242,17 @@ jQuery.event = {
 				// Pass in a reference to the handler function itself
 				// So that we can later remove it
 				event.handler = handler;
+				//将data参数添加到事件event参数中,通过e.data返回绑定时的data参数
 				event.data = handler.data;
 
-				ret = handler.apply( this, arguments );
+				//真正执行事件回调函数，这里原生的事件参数已经经过拓展了再传递
+				ret = handler.apply( this, arguments );//arguments[0] == event
 
-				if ( val !== false )
+				if ( val !== false )//
 					val = ret;
 
+				//如果处理函数的返回false话，执行阻止冒泡、阻止默认行为，
+				//只要有一个处理函数返回false，就会执行
 				if ( ret === false ) {
 					event.preventDefault();
 					event.stopPropagation();
@@ -2402,6 +2413,7 @@ jQuery.event = {
 jQuery.fn.extend({
 	//为每一个匹配元素的特定事件（像click）绑定一个事件处理器函数。
 	bind: function( type, data, fn ) {
+		//console.log(arguments)
 		//console.log(this);//指的是jQuery对象(new jQuery.fn.jQuery.init产生的对象)
 		/*
 			事件处理函数fn会接收到一个事件对象，可以通过它来阻止（浏览器）默认的行为。
