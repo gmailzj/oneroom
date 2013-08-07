@@ -1964,10 +1964,13 @@ jQuery.event = {
 		var handle = jQuery.data(elem, "handle") || jQuery.data(elem, "handle", function(){
 				// Handle the second event of a trigger and when
 				// an event is called after a page has unloaded
+				
 				console.log('callee',arguments);//MouseEvent对象
-				//console.log(typeof event.triggered);
+				console.log(arguments.callee);//
+				console.log(arguments.callee.elem);//
+				//console.log(typeof jQuery.event.triggered);
 				if ( typeof jQuery != "undefined" && !jQuery.event.triggered ){
-					return jQuery.event.handle.apply(arguments.callee.elem, arguments);
+					return jQuery.event.handle.apply(arguments.callee.elem, arguments);//?arguments.callee.elem在哪赋值的，在下面的一句赋值
 				}
 					
 			});
@@ -2264,18 +2267,26 @@ jQuery.event = {
 	},
 
 	fix: function(event) {
+		console.log('run-fix');
 		if ( event[expando] == true )
 			return event;
 
 		// store a copy of the original event object
 		// and "clone" to set read-only properties
+		//事件触发的时候 真实的事件参数(比如MouseEvent)
 		var originalEvent = event;
+		console.log(event);
+		//给event重新赋值
 		event = { originalEvent: originalEvent };
+		console.log(event);
+		
+		
+		//将原来的事件参数的值 复制到新的event对象中
 		var props = "altKey attrChange attrName bubbles button cancelable charCode clientX clientY ctrlKey currentTarget data detail eventPhase fromElement handler keyCode metaKey newValue originalTarget pageX pageY prevValue relatedNode relatedTarget screenX screenY shiftKey srcElement target timeStamp toElement type view wheelDelta which".split(" ");
 		for ( var i=props.length; i; i-- )
 			event[ props[i] ] = originalEvent[ props[i] ];
 
-		// Mark it as fixed
+		// Mark it as fixed 
 		event[expando] = true;
 
 		//拓展事件的冒泡和阻止默认行为的函数
@@ -2350,6 +2361,7 @@ jQuery.event = {
 		return proxy;
 	},
 
+	//特殊处理
 	special: {
 		ready: {
 			setup: function() {
@@ -2376,6 +2388,7 @@ jQuery.event = {
 
 			handler: function(event) {
 				// If we actually just moused on to a sub-element, ignore it
+				//如果只是移动到子元素,忽略
 				if ( withinElement(event, this) ) return true;
 				// Execute the right handlers by setting the event type to mouseenter
 				event.type = "mouseenter";

@@ -47,7 +47,7 @@ $('#nav li').bind('click',{a:1,b:2},function(e){
 
 /**/
 $('#nav li a').bind('click',function(e){
-	console.log('li a clicked'); 
+	console.log('第1个处理函数'); 
 	//return false;
 	e.stopPropagation();
 	e.preventDefault();
