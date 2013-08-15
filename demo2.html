@@ -57,6 +57,8 @@ $('#nav li a').bind('click',function(e){
 	console.log('第2个处理函数');
 });
 
+$('#nav li a').unbind('click',function(){});
+
 //console.log($('#nav li a').data('address'));
 //$('#nav').bind('click',{a:1,b:2},fn);
 
@@ -71,23 +73,7 @@ $('#nav').get(0).onclick = function(e){
 
 
 
-var Share = {};
-Share.pair = {
-'qq':'qq',
-'sina':'sina'
-
-};
-
-Share.bind = function(id){
-	for(var key in Share.pair){
-	
-		jQuery('#'+id+'_'+key).click(function(){
-			console.log(Share.pair[key])
-		})
-	}
-
-}
-Share.bind('share')
+ 
 
 
 

@@ -11,7 +11,7 @@
  */
 
 // Map over jQuery in case of overwrite
-var _jQuery = window.jQuery,
+var _jQuery = window.jQuery,//如果已经存在全局变量jQuery和$,保存起来，noConflict的是时候要用到
 // Map over the $ in case of overwrite
 	_$ = window.$;
 
@@ -133,7 +133,7 @@ jQuery.fn = jQuery.prototype = {
 	// Force the current matched set of elements to become
 	// the specified array of elements (destroying the stack in the process)
 	// You should use pushStack() in order to do this, but maintain the stack
-	setArray: function( elems ) {//转化成真数组
+	setArray: function( elems ) {//转化成真数组, 实例方法
 		// Resetting the length to 0, then using the native Array push
 		// is a super-fast way to populate an object with array-like properties
 		this.length = 0;//初始化长度，push 会在原始的length+1
@@ -2033,7 +2033,7 @@ jQuery.event = {
 	global: {},
 
 	// Detach an event or set of events from an element
-	remove: function(elem, types, handler) {
+	remove: function(elem, types, handler) {//静态方法
 		// don't do events on text and comment nodes
 		//如果是文本节点或者注释节点
 		if ( elem.nodeType == 3 || elem.nodeType == 8 )
@@ -2043,11 +2043,11 @@ jQuery.event = {
 		var events = jQuery.data(elem, "events"), ret, index;
 
 		if ( events ) {//如果存在的有事件处理函数
-			// Unbind all events for the element  解除所有事件处理函数绑定
+			// Unbind all events for the element  解除所有事件类型处理函数绑定，递归调用
 			if ( types == undefined || (typeof types == "string" && types.charAt(0) == ".") )
 				for ( var type in events )
 					this.remove( elem, type + (types || "") );
-			else {
+			else {//如果存在有事件类型
 				// types is actually an event object here //如果types传递的是event参数
 				if ( types.type ) {
 					handler = types.handler;
@@ -2063,6 +2063,9 @@ jQuery.event = {
 
 					if ( events[type] ) {//如果存在当前的type的处理函数
 						// remove the given handler for the given type
+						console.log(handler);
+						console.log(events[type]);
+						console.log(events[type][handler.guid]);
 						if ( handler )//如果存在，删掉所有handlers中的handler.guid对应的handler(对应关系已经在bind的时候就确立了)
 							delete events[type][handler.guid];
 
@@ -2455,9 +2458,9 @@ jQuery.fn.extend({
 		});
 	},
 
-	unbind: function( type, fn ) {
+	unbind: function( type, fn ) {//实例方法 解绑
 		return this.each(function(){
-			jQuery.event.remove( this, type, fn );
+			jQuery.event.remove( this, type, fn );//this表示的是待解绑的dom对象
 		});
 	},
 
