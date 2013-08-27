@@ -11,7 +11,7 @@
  */
 
 // Map over jQuery in case of overwrite
-var _jQuery = window.jQuery,
+var _jQuery = window.jQuery,//如果已经存在全局变量jQuery和$,保存起来，noConflict的是时候要用到
 // Map over the $ in case of overwrite
 	_$ = window.$;
 
@@ -133,7 +133,7 @@ jQuery.fn = jQuery.prototype = {
 	// Force the current matched set of elements to become
 	// the specified array of elements (destroying the stack in the process)
 	// You should use pushStack() in order to do this, but maintain the stack
-	setArray: function( elems ) {//转化成真数组
+	setArray: function( elems ) {//转化成真数组, 实例方法
 		// Resetting the length to 0, then using the native Array push
 		// is a super-fast way to populate an object with array-like properties
 		this.length = 0;//初始化长度，push 会在原始的length+1
@@ -1996,6 +1996,7 @@ jQuery.event = {
 			var handlers = events[type];
 
 			// Init the event handler queue
+			//如果没有绑定过，在这里初始化
 			if (!handlers) {
 				handlers = events[type] = {};
 
@@ -2032,40 +2033,45 @@ jQuery.event = {
 	global: {},
 
 	// Detach an event or set of events from an element
-	remove: function(elem, types, handler) {
+	remove: function(elem, types, handler) {//静态方法
 		// don't do events on text and comment nodes
+		//如果是文本节点或者注释节点
 		if ( elem.nodeType == 3 || elem.nodeType == 8 )
 			return;
-
+		
+		//jQuery.data(elem, "events")中保存的是所有事件处理函数
 		var events = jQuery.data(elem, "events"), ret, index;
 
-		if ( events ) {
-			// Unbind all events for the element
+		if ( events ) {//如果存在的有事件处理函数
+			// Unbind all events for the element  解除所有事件类型处理函数绑定，递归调用
 			if ( types == undefined || (typeof types == "string" && types.charAt(0) == ".") )
 				for ( var type in events )
 					this.remove( elem, type + (types || "") );
-			else {
-				// types is actually an event object here
+			else {//如果存在有事件类型
+				// types is actually an event object here //如果types传递的是event参数
 				if ( types.type ) {
 					handler = types.handler;
 					types = types.type;//
 				}
 
 				// Handle multiple events seperated by a space
-				// jQuery(...).unbind("mouseover mouseout", fn);
+				// jQuery(...).unbind("mouseover mouseout", fn);//多个事件名的解绑
 				jQuery.each(types.split(/\s+/), function(index, type){
 					// Namespaced event handlers
 					var parts = type.split(".");
-					type = parts[0];
+					type = parts[0];//没有'.'点的话返回全部字符串
 
-					if ( events[type] ) {
+					if ( events[type] ) {//如果存在当前的type的处理函数
 						// remove the given handler for the given type
-						if ( handler )
+						console.log(handler);
+						console.log(events[type]);
+						console.log(events[type][handler.guid]);
+						if ( handler )//如果存在，删掉所有handlers中的handler.guid对应的handler(对应关系已经在bind的时候就确立了)
 							delete events[type][handler.guid];
 
 						// remove all handlers for the given type
-						else
-							for ( handler in events[type] )
+						else //如果没有提供handler参数
+							for ( handler in events[type] )//这里handler是一个key
 								// Handle the removal of namespaced events
 								if ( !parts[1] || events[type][handler].type == parts[1] )
 									delete events[type][handler];
@@ -2222,7 +2228,7 @@ jQuery.event = {
 		var val, ret, namespace, all, handlers;
 		//console.log(event);
 		//event 代表原生事件参数，通过jQuery.event.fix来拓展事件参数的值
-		event = arguments[0] = jQuery.event.fix( event || window.event );
+		event = arguments[0] = jQuery.event.fix( event || window.event );//同时覆盖arguments[0],也就是event参数
 
 		// Namespaced event handlers
 		namespace = event.type.split(".");
@@ -2231,7 +2237,7 @@ jQuery.event = {
 		// Cache this now, all = true means, any handler
 		all = !namespace && !event.exclusive;
 
-		//得到所有原始事件处理函数
+		//得到所有原始事件处理函数 event.type某种类型的事件可能绑定有多个处理函数
 		handlers = ( jQuery.data(this, "events") || {} )[event.type];
 
 		console.log(arguments);
@@ -2267,7 +2273,7 @@ jQuery.event = {
 	},
 
 	fix: function(event) {
-		console.log('run-fix');
+		//console.log('run-fix');
 		if ( event[expando] == true )
 			return event;
 
@@ -2307,10 +2313,11 @@ jQuery.event = {
 			originalEvent.cancelBubble = true;
 		};
 
-		// Fix timeStamp
+		// Fix timeStamp 事件时间戳
 		event.timeStamp = event.timeStamp || now();
 
 		// Fix target property, if necessary
+		//如果没有定义事件的target属性,ie没有这个属性
 		if ( !event.target )
 			event.target = event.srcElement || document; // Fixes #1925 where srcElement might not be defined either
 
@@ -2329,17 +2336,17 @@ jQuery.event = {
 			event.pageY = event.clientY + (doc && doc.scrollTop || body && body.scrollTop || 0) - (doc.clientTop || 0);
 		}
 
-		// Add which for key events
+		// Add which for key events //键盘事件 按下的是哪个key
 		if ( !event.which && ((event.charCode || event.charCode === 0) ? event.charCode : event.keyCode) )
 			event.which = event.charCode || event.keyCode;
 
-		// Add metaKey to non-Mac browsers (use ctrl for PC's and Meta for Macs)
+		// Add metaKey to non-Mac browsers (use ctrl for PC's and Meta for Macs) //是否按下了功能键
 		if ( !event.metaKey && event.ctrlKey )
 			event.metaKey = event.ctrlKey;
 
 		// Add which for click: 1 == left; 2 == middle; 3 == right
 		// Note: button is not normalized, so don't use it
-		if ( !event.which && event.button )
+		if ( !event.which && event.button )//鼠标是按下的哪个键 左中右
 			event.which = (event.button & 1 ? 1 : ( event.button & 2 ? 3 : ( event.button & 4 ? 2 : 0 ) ));
 
 		return event;
@@ -2451,9 +2458,9 @@ jQuery.fn.extend({
 		});
 	},
 
-	unbind: function( type, fn ) {
+	unbind: function( type, fn ) {//实例方法 解绑
 		return this.each(function(){
-			jQuery.event.remove( this, type, fn );
+			jQuery.event.remove( this, type, fn );//this表示的是待解绑的dom对象
 		});
 	},
 
