@@ -1988,11 +1988,12 @@ jQuery.event = {
 			// Namespaced event handlers
 			var parts = type.split(".");
 			type = parts[0];
-			//console.log(parts[1]);
+			console.log(parts);
 			handler.type = parts[1];
 
 			// Get the current list of functions bound to this event
 
+			//handlers引用某种类型的事件，handlers如果改变，则events[type]也会跟随改变
 			var handlers = events[type];
 
 			// Init the event handler queue
@@ -2006,7 +2007,7 @@ jQuery.event = {
 				if ( !jQuery.event.special[type] || jQuery.event.special[type].setup.call(elem) === false ) {
 					// Bind the global event handler to the element
 					//console.log(type, handle);
-					//绑定事件处理函数
+					//真正绑定事件处理函数
 					if (elem.addEventListener)
 						elem.addEventListener(type, handle, false);
 					else if (elem.attachEvent)
@@ -2019,10 +2020,12 @@ jQuery.event = {
 			//上面的代码
 			//var events = jQuery.data(elem, "events")
 			//var handlers = events[type]; 
+			//if ( !handler.guid )	 handler.guid = this.guid++;得到唯一guid
 			handlers[handler.guid] = handler;//保存到元素的events属性的type属性的唯一id
-
+			//console.log(handlers);
 			// Keep track of which events have been used, for global triggering
 			jQuery.event.global[type] = true;// 保存到全局
+			//console.log(events);
 		});
 
 		// Nullify elem to prevent memory leaks in IE
@@ -2641,6 +2644,7 @@ var withinElement = function(event, elem) {
 // Prevent memory leaks in IE
 // And prevent errors on refresh with events like mouseover in other browsers
 // Window isn't included so as not to unbind existing unload events
+//页面关闭卸载的时候 取消所有的事件绑定，防止ie内存泄露 ，jquery载入后就会绑定
 jQuery(window).bind("unload", function() {
 	jQuery("*").add(document).unbind();
 });
