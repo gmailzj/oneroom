@@ -78,6 +78,36 @@ $('#nav').get(0).onclick = function(e){
 //console.log($v);
 
 
+/*
+jQuery.extend({
+	add:function(a,b){return a+b;}
+
+})
+
+jQuery.fn.extend({
+	add:function(a,b){return a+b;}
+
+})
+*/
+
+$.ajax({
+	type: "GET",
+	url: "http://pianku.xmp.kankan.com/desk_tips/update_num.js",
+	dataType: "script"
+})
+
+//(function(){
+	function A(a, b, c) {
+	  var ar = [a, b, c];
+	  return function B(i) {
+	    return ar[i];
+	  };
+	}
+
+	var b = A('Here', 'I', 'am');
+	console.log( b(1) );
+//})();
+
 
  
 

@@ -581,25 +581,42 @@ function now(){
 	return +new Date;
 }
 
+/*
+在ajax中有这样一句代码
+s = jQuery.extend(true, s, jQuery.extend(true, {}, jQuery.ajaxSettings, s));
+分析其流程:
+s一般是一个｛｝json对象，用来给相关属性赋值
+
+target为第2个参数了s ，i=2，deep=true
+
+*/
 //重要的函数 
 jQuery.extend = jQuery.fn.extend = function() {
 	// copy reference to target object
 	var target = arguments[0] || {}, i = 1, length = arguments.length, deep = false, options;
 
 	// Handle a deep copy situation
-	if ( target.constructor == Boolean ) {
-		deep = target;
-		target = arguments[1] || {};
+	if ( target.constructor == Boolean ) {//如果传递的布尔值，比如ajax的时候会传递true
+		deep = target;//变成ture或者false
+		target = arguments[1] || {};//拓展源变为第2个参数或者是空对象{}
 		// skip the boolean and the target
-		i = 2;
+		i = 2;//跳过第1个bool参数和第2个源参数target
 	}
 
 	// Handle case when target is a string or something (possible in deep copy)
+	//如果源参数不是对象，也不是函数
 	if ( typeof target != "object" && typeof target != "function" )
 		target = {};
 
 	// extend jQuery itself if only one argument is passed
+	/*
+	这个地方比较的关键技巧：
+	如果执行的是jQuery.extend({}),this表示的jQuery对象，
+	如果执行的是jQuery.fn.extend({}),this表示的是jquery实例对象的原型
+	因为前面有jQuery.fn = jQuery.prototype这样的语句来绑定了原型关系
+	*/
 	if ( length == i ) {
+		//console.log(this);
 		target = this;
 		--i;
 	}
@@ -629,7 +646,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 			}
 
 	// Return the modified object
-	return target;
+	return target;//返回被拓展的对象
 };
 
 //闭包 now() = return +new Date;
@@ -2740,21 +2757,22 @@ jQuery.fn.extend({
 // Attach a bunch of functions for handling common AJAX events
 jQuery.each( "ajaxStart,ajaxStop,ajaxComplete,ajaxError,ajaxSuccess,ajaxSend".split(","), function(i,o){
 	jQuery.fn[o] = function(f){
-		return this.bind(o, f);
+
+		return this.bind(o, f);//这里的this指的是jquery实例对象
 	};
 });
 
 var jsc = now();
-
+//ajax相关操作开始  直接拓展的是jQuery静态对象
 jQuery.extend({
 	get: function( url, data, callback, type ) {
 		// shift arguments if data argument was ommited
-		if ( jQuery.isFunction( data ) ) {
+		if ( jQuery.isFunction( data ) ) {//如果data参数是函数，表示是回调，将data置空
 			callback = data;
 			data = null;
 		}
 
-		return jQuery.ajax({
+		return jQuery.ajax({//下面的ajax：函数来处理
 			type: "GET",
 			url: url,
 			data: data,
