@@ -2808,7 +2808,7 @@ jQuery.extend({
 		jQuery.extend( jQuery.ajaxSettings, settings );
 	},
 
-	ajaxSettings: {
+	ajaxSettings: {//这个是默认的ajax的配置options
 		url: location.href,
 		global: true,
 		type: "GET",
