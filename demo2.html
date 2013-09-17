@@ -94,7 +94,11 @@ var ops = {
 	url: "http://pianku.xmp.kankan.com/desk_tips/update_num.js",
 	dataType: "script"
 };
-var abcd = jQuery.extend(true, {}, jQuery.ajaxSettings, ops);
+
+//var ops1 =  jQuery.extend(jQuery.ajaxSettings, ops);
+//console.log(ops1);
+//var abcd = jQuery.extend(true, {}, jQuery.ajaxSettings, ops);
+var abcd = jQuery.extend(true, {}, jQuery.ajaxSettings,ops);
 console.log(abcd);
 
 $.ajax(ops)

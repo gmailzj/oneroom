@@ -589,10 +589,28 @@ s一般是一个｛｝json对象，用来给相关属性赋值
 
 target为第2个参数了s ，i=2，deep=true
 
+说明如下：
+第1个参数如果是boolean值，表示是否是深度复制或者浅复制
+
+有几种调用方式：
+1 只有一个参数
+	例如：
+	jQuery.extend(s)或者jQuery.fn.extend(s),执行相应的静态拓展或者是实例拓展
+2 2到N个参数 jQuery.extend(target, src1, src2, src3,...);将src-N的key-value对复制给target
+	例如：
+	var a={}；
+	var b = {c:1,list:{[1,3,4]}}
+	jQuery.extend(a, b);
+
+特殊调用： 第一个参数为boolean	
+3 3个参数 第1个参数为boolean
+4 4个参数 第1个参数为boolean, 比如jQuery.extend(true, {}, jQuery.ajaxSettings, s) 
+  这样其实和3个参数没有区别，
 */
 //重要的函数 
 jQuery.extend = jQuery.fn.extend = function() {
 	// copy reference to target object
+	//将deep 默认为false 后面的循环中要用到
 	var target = arguments[0] || {}, i = 1, length = arguments.length, deep = false, options;
 
 	// Handle a deep copy situation
@@ -625,7 +643,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 		// Only deal with non-null/undefined values
 		if ( (options = arguments[ i ]) != null )
 			// Extend the base object
-			for ( var name in options ) {
+			for ( var name in options ) {//options指的是新的想添加到目标的源对象
 				var src = target[ name ], copy = options[ name ];
 
 				// Prevent never-ending loop
@@ -640,7 +658,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 					, copy );
 
 				// Don't bring in undefined values
-				else if ( copy !== undefined )
+				else if ( copy !== undefined )//如果源的这个item的value不是undefined，就复制到目标
 					target[ name ] = copy;
 
 			}
@@ -2808,7 +2826,7 @@ jQuery.extend({
 		jQuery.extend( jQuery.ajaxSettings, settings );
 	},
 
-	ajaxSettings: {//这个是默认的ajax的配置options
+	ajaxSettings: {//这个是默认的ajax的配置options，一般的时候都会调用jQuery.extend
 		url: location.href,
 		global: true,
 		type: "GET",
