@@ -89,12 +89,15 @@ jQuery.fn.extend({
 
 })
 */
-
-$.ajax({
+var ops = {
 	type: "GET",
 	url: "http://pianku.xmp.kankan.com/desk_tips/update_num.js",
 	dataType: "script"
-})
+};
+var abcd = jQuery.extend(true, {}, jQuery.ajaxSettings, ops);
+console.log(abcd);
+
+$.ajax(ops)
 
 //(function(){
 	function A(a, b, c) {
