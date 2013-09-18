@@ -2904,15 +2904,19 @@ jQuery.extend({
 	ajax: function( s ) {
 		// Extend the settings, but re-extend 's' so that it can be
 		// checked again later (in the test suite, specifically)
+		//在jQuery.extend函数上面 有详细的解释，大致功能 就是在默认ajaxSettings的基础上，接收用户的配置参数
 		s = jQuery.extend(true, s, jQuery.extend(true, {}, jQuery.ajaxSettings, s));
 
 		var jsonp, jsre = /=\?(&|$)/g, status, data,
 			type = s.type.toUpperCase();
 
 		// convert data if not already a string
+		/*发送到服务器的数据。将自动转换为请求字符串格式。GET 请求中将附加在 URL 后
+		比如s.data值为{foo:["bar1", "bar2"]} 则自动转换为 foo=bar1&foo=bar2 */
 		if ( s.data && s.processData && typeof s.data != "string" )
 			s.data = jQuery.param(s.data);
 
+		console.log(s.data);
 		// Handle JSONP Parameter Callbacks
 		if ( s.dataType == "jsonp" ) {
 			if ( type == "GET" ) {
@@ -3222,14 +3226,20 @@ jQuery.extend({
 
 	// Serialize an array of form elements or a set of
 	// key/values into a query string
+	/*
+		将表单元素数组或者对象序列化
+	*/
 	param: function( a ) {
 		var s = [];
 
 		// If an array was passed in, assume that it is an array
 		// of form elements
+		//如果是数组或者jquery实例对象
 		if ( a.constructor == Array || a.jquery )
 			// Serialize the form elements
 			jQuery.each( a, function(){
+				//this指的是数组的每一项
+				console.log(this);
 				s.push( encodeURIComponent(this.name) + "=" + encodeURIComponent( this.value ) );
 			});
 
