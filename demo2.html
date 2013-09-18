@@ -91,15 +91,19 @@ jQuery.fn.extend({
 */
 var ops = {
 	type: "GET",
-	url: "http://pianku.xmp.kankan.com/desk_tips/update_num.js",
-	dataType: "script"
+	data_list:{n1:1,n2:2},
+	data_arr:[1,2,3,4]
 };
 
 //var ops1 =  jQuery.extend(jQuery.ajaxSettings, ops);
 //console.log(ops1);
 //var abcd = jQuery.extend(true, {}, jQuery.ajaxSettings, ops);
-var abcd = jQuery.extend(true, {}, jQuery.ajaxSettings,ops);
-console.log(abcd);
+//var abcd = jQuery.extend(true, {}, jQuery.ajaxSettings);
+var ops_2 = {} ;
+jQuery.extend(true, ops_2, ops);
+ops_2.data_arr.push(5);
+console.log(ops);
+console.log(ops_2);
 
 $.ajax(ops)
 

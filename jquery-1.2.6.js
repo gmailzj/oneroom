@@ -606,11 +606,54 @@ target为第2个参数了s ，i=2，deep=true
 3 3个参数 第1个参数为boolean
 4 4个参数 第1个参数为boolean, 比如jQuery.extend(true, {}, jQuery.ajaxSettings, s) 
   这样其实和3个参数没有区别，
+
+关于深度复制，举例如下：
+
+
+var ops_2 ;
+var ops_3 = jQuery.extend(false, ops_2, ops);
+console.log(ops_2);//undefined
+console.log(ops_3);//不是undefined
+因为第一个参数是false，所以var target = arguments[0] || {}；变成了一个局部变量(空对象{})的值,
+所以ops_2的值为undefined，但是最终返回值是有值的，所以ops_3不为空
+
+如果第一个参数是true
+var ops_3 = jQuery.extend(true, ops_2, ops);
+ops_2 和 ops_3都会被改变
+因为 target = arguments[1] || {};这里会把target指向ops_2
+
+
+对于引用复合类型的数据项key-value,value是复合数据类型
+还有一个引用和clone的地方要注意
+var ops = {
+	data_list:{n1:1,n2:2},
+	data_arr:[1,2,3,4]
+};
+
+//下面的改变数组，加了一项，不会改变原对象ops, 相当于clone
+var ops_2 = {} ;
+jQuery.extend(true, ops_2, ops);
+ops_2.data_arr.push(5);
+console.log(ops.data_arr);//[1, 2, 3, 4]
+console.log(ops_2.data_arr);//[1, 2, 3, 4, 5]
+
+//下面的改变数组，加了一项，会改变原对象ops，因为是引用赋值
+var ops_2 = {} ;
+jQuery.extend(ops_2, ops);
+ops_2.data_arr.push(5);
+console.log(ops.data_arr);//[1, 2, 3, 4, 5]
+console.log(ops_2.data_arr);//[1, 2, 3, 4, 5]
+
 */
 //重要的函数 
 jQuery.extend = jQuery.fn.extend = function() {
 	// copy reference to target object
 	//将deep 默认为false 后面的循环中要用到
+	/*
+	target = arguments[0] || {} 注意 如果第1个为false,target被赋值为{},
+	下面的就target.constructor就不是布尔类型了
+
+	*/ 
 	var target = arguments[0] || {}, i = 1, length = arguments.length, deep = false, options;
 
 	// Handle a deep copy situation
@@ -641,6 +684,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 
 	for ( ; i < length; i++ )
 		// Only deal with non-null/undefined values
+		//只处理不为null和undefined的参数
 		if ( (options = arguments[ i ]) != null )
 			// Extend the base object
 			for ( var name in options ) {//options指的是新的想添加到目标的源对象
@@ -651,9 +695,16 @@ jQuery.extend = jQuery.fn.extend = function() {
 					continue;
 
 				// Recurse if we're merging object values
+				/*
+				如果deep参数为真  复制源copy是对象，而且不是元素节点类型
+				*/
 				if ( deep && copy && typeof copy == "object" && !copy.nodeType )
 					target[ name ] = jQuery.extend( deep, 
 						// Never move original objects, clone them
+						/*
+						啥意思
+						*/
+
 						src || ( copy.length != null ? [ ] : { } )
 					, copy );
 
