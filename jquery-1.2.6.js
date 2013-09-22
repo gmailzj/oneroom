@@ -2907,8 +2907,9 @@ jQuery.extend({
 		//在jQuery.extend函数上面 有详细的解释，大致功能 就是在默认ajaxSettings的基础上，接收用户的配置参数
 		s = jQuery.extend(true, s, jQuery.extend(true, {}, jQuery.ajaxSettings, s));
 
+		//jsre 匹配=? 或者=?&
 		var jsonp, jsre = /=\?(&|$)/g, status, data,
-			type = s.type.toUpperCase();
+			type = s.type.toUpperCase();//一般是'GET' 或者 'POST'
 
 		// convert data if not already a string
 		/*发送到服务器的数据。将自动转换为请求字符串格式。GET 请求中将附加在 URL 后
@@ -2916,32 +2917,38 @@ jQuery.extend({
 		if ( s.data && s.processData && typeof s.data != "string" )
 			s.data = jQuery.param(s.data);
 
-		console.log(s.data);
+		//console.log(s.data);
 		// Handle JSONP Parameter Callbacks
 		if ( s.dataType == "jsonp" ) {
 			if ( type == "GET" ) {
+				//如果url中没有=？
 				if ( !s.url.match(jsre) )
 					s.url += (s.url.match(/\?/) ? "&" : "?") + (s.jsonp || "callback") + "=?";
+				//console.log(s.url);
 			} else if ( !s.data || !s.data.match(jsre) )
 				s.data = (s.data ? s.data + "&" : "") + (s.jsonp || "callback") + "=?";
 			s.dataType = "json";
 		}
 
-		// Build temporary JSONP function
+		// Build temporary JSONP function 处理jsonp类型
 		if ( s.dataType == "json" && (s.data && s.data.match(jsre) || s.url.match(jsre)) ) {
-			jsonp = "jsonp" + jsc++;
+			jsonp = "jsonp" + jsc++;//hash id自增
 
 			// Replace the =? sequence both in the query string and the data
+			//替换s.data 和s.url 中的=?
 			if ( s.data )
 				s.data = (s.data + "").replace(jsre, "=" + jsonp + "$1");
+
+			console.log(s.url);
 			s.url = s.url.replace(jsre, "=" + jsonp + "$1");
+			console.log(s.url);
 
 			// We need to make sure
 			// that a JSONP style response is executed properly
-			s.dataType = "script";
+			s.dataType = "script";//标记请求数据类型为script
 
 			// Handle JSONP-style loading
-			window[ jsonp ] = function(tmp){
+			window[ jsonp ] = function(tmp){//window[ jsonp ] 肯定是唯一的 因为上面是自增的
 				data = tmp;
 				success();
 				complete();
@@ -2950,6 +2957,7 @@ jQuery.extend({
 				try{ delete window[ jsonp ]; } catch(e){}
 				if ( head )
 					head.removeChild( script );
+
 			};
 		}
 
@@ -2959,12 +2967,15 @@ jQuery.extend({
 		if ( s.cache === false && type == "GET" ) {
 			var ts = now();
 			// try replacing _= if it is there
+			//s.url中存在?_=或者 &_=,取代值为时间戳
 			var ret = s.url.replace(/(\?|&)_=.*?(&|$)/, "$1_=" + ts + "$2");
 			// if nothing was replaced, add timestamp to the end
+			//如果前面没有替换 增加_=时间戳
 			s.url = ret + ((ret == s.url) ? (s.url.match(/\?/) ? "&" : "?") + "_=" + ts : "");
 		}
 
 		// If data is available, append data to url for get requests
+		//如果s.data不为空 且是get的话 将data附加到s.url后面
 		if ( s.data && type == "GET" ) {
 			s.url += (s.url.match(/\?/) ? "&" : "?") + s.data;
 
@@ -2981,18 +2992,19 @@ jQuery.extend({
 
 		// If we're requesting a remote document
 		// and trying to load JSON or Script with a GET
+		//如果请求的host不为当前页面的location.host
+		//通过dom的script标签来加载
 		if ( s.dataType == "script" && type == "GET"
 				&& remote.test(s.url) && remote.exec(s.url)[1] != location.host ){
 			var head = document.getElementsByTagName("head")[0];
 			var script = document.createElement("script");
 			script.src = s.url;
-			if (s.scriptCharset)
+			if (s.scriptCharset)//设置请求的编码
 				script.charset = s.scriptCharset;
 
 			// Handle Script loading
 			if ( !jsonp ) {
 				var done = false;
-
 				// Attach handlers for all browsers
 				script.onload = script.onreadystatechange = function(){
 					if ( !done && (!this.readyState ||
@@ -3000,7 +3012,7 @@ jQuery.extend({
 						done = true;
 						success();
 						complete();
-						head.removeChild( script );
+						head.removeChild( script );//移除当前的script标签
 					}
 				};
 			}
@@ -3008,6 +3020,7 @@ jQuery.extend({
 			head.appendChild(script);
 
 			// We handle everything using the script element injection
+			//json 和 jsonp 通过script标签的方式 处理结束  还有通过xhr的方式
 			return undefined;
 		}
 
@@ -3027,10 +3040,12 @@ jQuery.extend({
 		// Need an extra try/catch for cross domain requests in Firefox 3
 		try {
 			// Set the correct header, if data is being sent
+			// 设置contentType 比如 'application/x-www-form-urlencoded'
 			if ( s.data )
 				xhr.setRequestHeader("Content-Type", s.contentType);
 
 			// Set the If-Modified-Since header, if ifModified mode.
+			//(默认: false) 仅在服务器数据改变时获取新数据
 			if ( s.ifModified )
 				xhr.setRequestHeader("If-Modified-Since",
 					jQuery.lastModified[s.url] || "Thu, 01 Jan 1970 00:00:00 GMT" );
@@ -3039,12 +3054,26 @@ jQuery.extend({
 			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 
 			// Set the Accepts header for the server, depending on the dataType
+			/*
+			accepts: {
+			xml: "application/xml, text/xml",
+			html: "text/html",
+			script: "text/javascript, application/javascript",
+			json: "application/json, text/javascript",
+			text: "text/plain",
+			_default: "*\/*"
+			}
+			*/
 			xhr.setRequestHeader("Accept", s.dataType && s.accepts[ s.dataType ] ?
 				s.accepts[ s.dataType ] + ", */*" :
 				s.accepts._default );
 		} catch(e){}
 
 		// Allow custom headers/mimetypes
+		/*
+			发送请求前可修改 XMLHttpRequest 对象的函数，如添加自定义 HTTP 头。
+			XMLHttpRequest 对象是唯一的参数。这是一个 Ajax 事件。如果返回false可以取消本次ajax请求。 
+		*/
 		if ( s.beforeSend && s.beforeSend(xhr, s) === false ) {
 			// cleanup active request counter
 			s.global && jQuery.active--;
@@ -3053,6 +3082,10 @@ jQuery.extend({
 			return false;
 		}
 
+		/*
+		(默认: true) 是否触发全局 AJAX 事件。设置为 false 将不会触发全局 AJAX 事件，
+		如 ajaxStart 或 ajaxStop 可用于控制不同的 Ajax 事件。
+		*/
 		if ( s.global )
 			jQuery.event.trigger("ajaxSend", [xhr, s]);
 
@@ -3244,6 +3277,7 @@ jQuery.extend({
 			});
 
 		// Otherwise, assume that it's an object of key/value pairs
+		//key-value键值对的对象
 		else
 			// Serialize the key/values
 			for ( var j in a )

@@ -91,25 +91,21 @@ jQuery.fn.extend({
 */
 var ops = {
 	type: "GET",
-	data_list:{n1:1,n2:2},
-	data_arr:[1,2,3,4],
-	//data:{foo:["bar1", "bar2"]} ,
-	data:["bar1", "bar2"] ,
-	dd:1
+	url:"demo.js?_='dd'",
+	dataType:"jsonp",
+	//callback:"fn",
+	jsonp: "callback",//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
+    jsonpCallback:"fn",
+	data:{foo:"bar1"} 
 };
 
-//var ops1 =  jQuery.extend(jQuery.ajaxSettings, ops);
-//console.log(ops1);
-//var abcd = jQuery.extend(true, {}, jQuery.ajaxSettings, ops);
-//var abcd = jQuery.extend(true, {}, jQuery.ajaxSettings);
-var ops_2 = {} ;
-jQuery.extend(true, ops_2, ops);
-ops_2.data_arr.push(5);
-console.log(ops);
-console.log(ops_2);
 
 $.ajax(ops)
 
+function fn(str){
+
+	alert(str)
+}
 //(function(){
 	function A(a, b, c) {
 	  var ar = [a, b, c];
