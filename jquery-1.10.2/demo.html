@@ -5,8 +5,11 @@
 <title>demo</title>
 <link href="css/style.css?d=0712" rel="stylesheet" type="text/css" media="all" />
 
+<!--
 <script type="text/javascript" src="jquery-1.10.2.js"></script>
 
+-->
+<script type="text/javascript" src="jquery-1.8.3.js"></script>
 </head>
 <body>
 <p class="list-pager" id="douban_comment_pager4"> <strong>1</strong>
@@ -28,10 +31,37 @@
 ctrl + alt + enter
 div#content.a>ul>li*3>a[href="javascript:void(0);"]{Links$}
 */
-var e = $(".list-pager a");
-console.log(e);
-debugger
-var e = $("");
+ var ops = {
+	type: "GET",
+	url:"../callback.php",
+	dataType:"json",
+	//dataType:"jsonp",
+	//dataType:"script",
+	//dataType:"text",
+	//callback:"fn",
+	//jsonp: "callback",//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
+    //jsonpCallback:"fn",
+    
+	complete:function(xhr){
+		console.log(xhr);
+		console.log('complete');
+	},
+	/*
+	success:function(str){
+
+		console.log('success');
+	},*/
+	success:fn,
+	data:{foo:"bar1"} 
+};
+
+
+$.ajax(ops)
+
+function fn(str){
+	str = str || 'test';
+	alert(str);
+}
 </script>
  
 

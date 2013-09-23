@@ -91,12 +91,22 @@ jQuery.fn.extend({
 */
 var ops = {
 	type: "GET",
-	url:"demo.js?_='dd'",
+	url:"callback.php",
 	dataType:"jsonp",
-	//callback:"fn",
+	//dataType:"text",
 	jsonp: "callback",//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
     jsonpCallback:"fn",
-	data:{foo:"bar1"} 
+    callback:"fn",
+	data:{foo:"bar1"},
+	success:function(str){
+		/*
+		 如果dataType 是json
+		*/
+		alert(str);
+	},
+	complete:function(){
+
+	}
 };
 
 
