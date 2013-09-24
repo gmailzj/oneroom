@@ -3007,10 +3007,15 @@ jQuery.extend({
 
 		// Watch for a new set of requests
 		// s.global 在ajaxSettings中默认为true
-		if ( s.global && ! jQuery.active++ )
+		console.log(jQuery.active);//0
+		// 先执行! jQuery.active (结果为真),然后再加
+		if ( s.global && ! jQuery.active++ ){
 			jQuery.event.trigger( "ajaxStart" );
+		}
+			
 
 		// Matches an absolute URL, and saves the domain
+		// 用来匹配是否是http://绝对链接，并且得到host的值
 		var remote = /^(?:\w+:)?\/\/([^\/?#]+)/;
 
 		// If we're requesting a remote document
@@ -3232,6 +3237,7 @@ jQuery.extend({
 	},
 
 	// Counter for holding the number of active queries
+	//
 	active: 0,
 
 	// Determines if an XMLHttpRequest was successful or not
