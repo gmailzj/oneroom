@@ -2938,21 +2938,41 @@ jQuery.extend({
 			//替换s.data 和s.url 中的=?
 			if ( s.data )
 				s.data = (s.data + "").replace(jsre, "=" + jsonp + "$1");
-
-			console.log(s.url);
 			s.url = s.url.replace(jsre, "=" + jsonp + "$1");
-			console.log(s.url);
+
 
 			// We need to make sure
 			// that a JSONP style response is executed properly
 			s.dataType = "script";//标记请求数据类型为script
 
 			// Handle JSONP-style loading
+			/*
+			这个版本的jsonp感觉有问题
+			jsonp: "callback",//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
+    		jsonpCallback:"fn", 这个参数好像都没有用到，常规是会传递到请求的动态脚本 url里面会有callback=fn
+			*/
+			//在全局添加这个jsonp字符串对应的变量(是下面的函数)，jsonp的请求脚本url中有callback参数对应这个字符串，
+			//如果请求的返回值字符串(也就是js代码，比如jsonp1380008058815({a:1,b:2}) )，执行了这个函数。则相当于调用了下面的函数
+			/*
+				比如回调；
+				<?php	
+				$callback = 'fn';
+				if(isset($_GET['callback'])){
+				    $callback = $_GET['callback'];
+				}
+
+				echo $callback.'({a:1,b:2}, {c:3,d:4})';
+			*/
+			/*
+			这个函数的主要功能就是jsonp的时候执行success 和complete，
+			并且{a:1,b:2}作为第1个参数传递给data
+			*/ 
 			window[ jsonp ] = function(tmp){//window[ jsonp ] 肯定是唯一的 因为上面是自增的
 				data = tmp;
 				success();
 				complete();
 				// Garbage collect
+				//只执行一次 然后删掉内存中和script标签的这次加载
 				window[ jsonp ] = undefined;
 				try{ delete window[ jsonp ]; } catch(e){}
 				if ( head )
@@ -3239,6 +3259,7 @@ jQuery.extend({
 			xml = type == "xml" || !type && ct && ct.indexOf("xml") >= 0,
 			data = xml ? xhr.responseXML : xhr.responseText;
 
+		console.log(data);	
 		if ( xml && data.documentElement.tagName == "parsererror" )
 			throw "parsererror";
 
@@ -3246,6 +3267,7 @@ jQuery.extend({
 		if( filter )
 			data = filter( data, type );
 
+		console.log(data);
 		// If the type is "script", eval it in global context
 		if ( type == "script" )
 			jQuery.globalEval( data );

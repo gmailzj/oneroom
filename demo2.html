@@ -91,17 +91,25 @@ jQuery.fn.extend({
 */
 var ops = {
 	type: "GET",
-	url:"callback.php",
-	dataType:"jsonp",
+	url:"callback2.php",
+
+	//dataType:"jsonp",
+	dataType:"json",
 	//dataType:"text",
-	jsonp: "callback",//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
-    jsonpCallback:"fn",
-    callback:"fn",
+
+	//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
+	//jsonp: "callback",
+
+	//回调函数参数
+    //jsonpCallback:"fn",
+
+    //callback:"fn",
 	data:{foo:"bar1"},
 	success:function(str){
 		/*
 		 如果dataType 是json
 		*/
+		console.log(str);
 		alert(str);
 	},
 	complete:function(){
@@ -110,25 +118,12 @@ var ops = {
 };
 
 
-$.ajax(ops)
-
+$.ajax(ops);
 function fn(str){
-
-	alert(str)
+	//console.log(arguments.callee.caller)
+	console.log('回调2');
+	alert(str);
 }
-//(function(){
-	function A(a, b, c) {
-	  var ar = [a, b, c];
-	  return function B(i) {
-	    return ar[i];
-	  };
-	}
-
-	var b = A('Here', 'I', 'am');
-	console.log( b(1) );
-//})();
-
-
  
 
 
