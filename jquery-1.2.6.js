@@ -2981,9 +2981,11 @@ jQuery.extend({
 			};
 		}
 
+		//如果数据类型是script 而且 没有s.cache属性，默认s.cache为false
 		if ( s.dataType == "script" && s.cache == null )
 			s.cache = false;
 
+		//如果不缓存，更新时间戳，因为ajax中get请求默认会缓存
 		if ( s.cache === false && type == "GET" ) {
 			var ts = now();
 			// try replacing _= if it is there
@@ -3004,6 +3006,7 @@ jQuery.extend({
 		}
 
 		// Watch for a new set of requests
+		// s.global 在ajaxSettings中默认为true
 		if ( s.global && ! jQuery.active++ )
 			jQuery.event.trigger( "ajaxStart" );
 

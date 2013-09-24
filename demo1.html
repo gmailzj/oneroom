@@ -6,6 +6,7 @@
 <script src="jquery-1.2.6.js"></script>
 </head>
 <body>
+<div id="loading" style="display:none;">正在加载...</div>	
 <ul id="nav">
 	<li><a href="http://www.baidu.com" target="_blank">baidu</a></li>
 	<li>2</li>
@@ -14,17 +15,32 @@
 </ul>
 
 <script type="text/javascript">
+/*
+var windowElem = jQuery.browser.msie?document:window;
+	jQuery(windowElem).click(function(){
+	
+	})
 
+*/
+var windowElem = jQuery.browser.msie?document:window;
+$(windowElem).ajaxStart(function(){
+   $("#loading").show();
+ });
 
-
+/*
+$("#loading").ajaxStart(function(){
+   $(this).show();
+ });
+*/
 var ops1 = {
 	type: "GET",
 	url:"callback1.php",
 
 	dataType:"jsonp",
 	data:{foo:"bar1"},
+	//cache:true,
 	success:function(p){
-		alert(p.a)
+		//alert(p.a)
 		console.log(p);
 	},
 	complete:function(){
@@ -32,6 +48,10 @@ var ops1 = {
 	}
 }
 $.ajax(ops1);
+
+
+
+//$.ajax(ops1);
 
 </script>
 
