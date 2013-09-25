@@ -2828,7 +2828,7 @@ jQuery.fn.extend({
 // Attach a bunch of functions for handling common AJAX events
 jQuery.each( "ajaxStart,ajaxStop,ajaxComplete,ajaxError,ajaxSuccess,ajaxSend".split(","), function(i,o){
 	jQuery.fn[o] = function(f){
-
+		//f是函数
 		return this.bind(o, f);//这里的this指的是jquery实例对象
 	};
 });
@@ -2836,14 +2836,17 @@ jQuery.each( "ajaxStart,ajaxStop,ajaxComplete,ajaxError,ajaxSuccess,ajaxSend".sp
 var jsc = now();
 //ajax相关操作开始  直接拓展的是jQuery静态对象
 jQuery.extend({
+
+	//
 	get: function( url, data, callback, type ) {
 		// shift arguments if data argument was ommited
-		if ( jQuery.isFunction( data ) ) {//如果data参数是函数，表示是回调，将data置空
+		//如果data参数是函数，表示是回调，将data置空
+		if ( jQuery.isFunction( data ) ) {
 			callback = data;
 			data = null;
 		}
 
-		return jQuery.ajax({//下面的ajax：函数来处理
+		return jQuery.ajax({//最终其实是通过下面的$.ajax：函数来处理
 			type: "GET",
 			url: url,
 			data: data,
@@ -2852,6 +2855,7 @@ jQuery.extend({
 		});
 	},
 
+	//下面几个都是通过$.ajax来实现的
 	getScript: function( url, callback ) {
 		return jQuery.get(url, null, callback, "script");
 	},
@@ -3012,8 +3016,11 @@ jQuery.extend({
 		// jQuery.active 默认为0
 		console.log(jQuery.active);//0
 		// 先执行! jQuery.active (结果为真),然后再加
+
 		if ( s.global && ! jQuery.active++ ){
-			jQuery.event.trigger( "ajaxStart" );
+
+			/*全局总共有这些事件 ajaxStart,ajaxStop,ajaxComplete,ajaxError,ajaxSuccess,ajaxSend*/
+			jQuery.event.trigger( "ajaxStart" ); //触发全局ajaxStart
 		}
 			
 
@@ -3148,11 +3155,20 @@ jQuery.extend({
 					如果a真,b假，c假，返回c
 					如果a假,b假，返回a
 
+					s.ifModified
+					(默认: false) 仅在服务器数据改变时获取新数据。使用 HTTP 包 Last-Modified 头信息判断。
+					1 如果isTimeout参数为 'timeout',返回 'timeout'
+					2 如果jQuery.httpSuccess 返回false，返回'error'
+					3 如果用户定义了s.ifModified为真，jQuery.httpNotModified返回true，则返回'notmodified'
+					4 否则，返回'success'
+
 				*/
 				status = isTimeout == "timeout" && "timeout" ||
 					!jQuery.httpSuccess( xhr ) && "error" ||
 					s.ifModified && jQuery.httpNotModified( xhr, s.url ) && "notmodified" ||
 					"success";
+
+				console.log(status);
 
 				if ( status == "success" ) {
 					// Watch for, and catch, XML document parse errors
@@ -3173,14 +3189,18 @@ jQuery.extend({
 						modRes = xhr.getResponseHeader("Last-Modified");
 					} catch(e) {} // swallow exception thrown by FF if header is not available
 
+					console.log(modRes);
+
+					//写入到缓存对象jQuery.lastModified中
 					if ( s.ifModified && modRes )
 						jQuery.lastModified[s.url] = modRes;
 
 					// JSONP handles its own success callback
+					// JSONP类型有自己的回调，不在这里调用
 					if ( !jsonp )
 						success();
 				} else
-					jQuery.handleError(s, xhr, status);
+					jQuery.handleError(s, xhr, status);//超时和error的时候
 
 				// Fire the complete handlers
 				complete();
@@ -3189,7 +3209,7 @@ jQuery.extend({
 				if ( s.async )
 					xhr = null;
 			}
-		};
+		};//onreadystatechange 函数 end
 
 		if ( s.async ) {//是否异步 默认为true
 			// don't attach the handler to the request, just poll it instead
@@ -3228,7 +3248,7 @@ jQuery.extend({
 
 		function success(){
 			// If a local callback was specified, fire it and pass it the data
-			if ( s.success )
+			if ( s.success )//用户配置的success
 				s.success( data, status );
 
 			// Fire the global callback 触发全局回调
@@ -3294,6 +3314,16 @@ jQuery.extend({
 			var xhrRes = xhr.getResponseHeader("Last-Modified");
 
 			// Firefox always returns 200. check Last-Modified date
+			/* 返回真：
+				1 xhr.status == 304
+				2 返回头的Last-Modified  == jQuery.lastModified[url]
+				3 safari浏览器特殊处理
+
+				xhrRes = null  web服务器没有设置的话
+				jQuery.lastModified = {}
+				所以jQuery.lastModified[url] = undefined
+				null == undefined
+			*/
 			return xhr.status == 304 || xhrRes == jQuery.lastModified[url] ||
 				jQuery.browser.safari && xhr.status == undefined;
 		} catch(e){}

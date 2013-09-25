@@ -12,5 +12,5 @@ if(isset($_GET['callback'])){
 //echo '{a:1,b:2}';
 
 //script
-echo "var callFn = 5;";
+echo "var callFn = 51;";
 
