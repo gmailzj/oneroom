@@ -36,7 +36,11 @@ var ops1 = {
 	type: "GET",
 	url:"callback1.php",
 
-	dataType:"jsonp",
+	//dataType:"jsonp",
+	//dataType:"json",
+	dataType:"script",
+
+
 	data:{foo:"bar1"},
 	//cache:true,
 	success:function(p){

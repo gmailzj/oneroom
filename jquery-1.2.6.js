@@ -1541,6 +1541,8 @@ function num(elem, prop) {
 	quickID = new RegExp("^(" + chars + "+)(#)(" + chars + "+)"),
 	quickClass = new RegExp("^([#.]?)(" + chars + "*)");
 
+
+//下面的代码应该是以后的独立出来Sizzle(css dom选择器)
 jQuery.extend({
 	expr: {
 		"": function(a,i,m){return m[2]=="*"||jQuery.nodeName(a,m[2]);},
@@ -3007,6 +3009,7 @@ jQuery.extend({
 
 		// Watch for a new set of requests
 		// s.global 在ajaxSettings中默认为true
+		// jQuery.active 默认为0
 		console.log(jQuery.active);//0
 		// 先执行! jQuery.active (结果为真),然后再加
 		if ( s.global && ! jQuery.active++ ){
@@ -3020,7 +3023,7 @@ jQuery.extend({
 
 		// If we're requesting a remote document
 		// and trying to load JSON or Script with a GET
-		//如果请求的host不为当前页面的location.host
+		//如果请求的是script类型，而且host不匹配当前页面的location.host
 		//通过dom的script标签来加载
 		if ( s.dataType == "script" && type == "GET"
 				&& remote.test(s.url) && remote.exec(s.url)[1] != location.host ){
@@ -3031,13 +3034,16 @@ jQuery.extend({
 				script.charset = s.scriptCharset;
 
 			// Handle Script loading
-			if ( !jsonp ) {
-				var done = false;
+			if ( !jsonp ) {//jsonp为那个字符串， 为假说明肯定不是jsonp方式(json或者script)，
+				var done = false;//标记flag
 				// Attach handlers for all browsers
+				//兼容处理脚本加载后的回调
 				script.onload = script.onreadystatechange = function(){
 					if ( !done && (!this.readyState ||
 							this.readyState == "loaded" || this.readyState == "complete") ) {
 						done = true;
+
+						//请求的是script类型的时候也会执行success和complete
 						success();
 						complete();
 						head.removeChild( script );//移除当前的script标签
@@ -3048,7 +3054,7 @@ jQuery.extend({
 			head.appendChild(script);
 
 			// We handle everything using the script element injection
-			//json 和 jsonp 通过script标签的方式 处理结束  还有通过xhr的方式
+			//json 和 jsonp 通过script标签的方式(外域) 处理结束  还有通过xhr的方式
 			return undefined;
 		}
 
@@ -3060,6 +3066,7 @@ jQuery.extend({
 
 		// Open the socket
 		// Passing null username, generates a login popup on Opera (#2865)
+		// 第3个参数表示是否是异步
 		if( s.username )
 			xhr.open(type, s.url, s.async, s.username, s.password);
 		else
@@ -3068,7 +3075,7 @@ jQuery.extend({
 		// Need an extra try/catch for cross domain requests in Firefox 3
 		try {
 			// Set the correct header, if data is being sent
-			// 设置contentType 比如 'application/x-www-form-urlencoded'
+			// 设置contentType 默认值为ajaxSettings 'application/x-www-form-urlencoded'
 			if ( s.data )
 				xhr.setRequestHeader("Content-Type", s.contentType);
 
@@ -3104,8 +3111,10 @@ jQuery.extend({
 		*/
 		if ( s.beforeSend && s.beforeSend(xhr, s) === false ) {
 			// cleanup active request counter
+			// 重置 激活请求计数器
 			s.global && jQuery.active--;
 			// close opended socket
+			// 关闭xhr异步请求 并且返回
 			xhr.abort();
 			return false;
 		}
@@ -3115,20 +3124,31 @@ jQuery.extend({
 		如 ajaxStart 或 ajaxStop 可用于控制不同的 Ajax 事件。
 		*/
 		if ( s.global )
-			jQuery.event.trigger("ajaxSend", [xhr, s]);
+			jQuery.event.trigger("ajaxSend", [xhr, s]);//ajaxSend占位
 
 		// Wait for a response to come back
+		// ajax响应分支
 		var onreadystatechange = function(isTimeout){
 			// The transfer is complete and the data is available, or the request timed out
+			// 请求完成 或者请求超时
 			if ( !requestDone && xhr && (xhr.readyState == 4 || isTimeout == "timeout") ) {
-				requestDone = true;
+				requestDone = true;//标记完成
 
-				// clear poll interval
+				// clear poll interval 
+				// 如果请求完成 取消定时检查
 				if (ival) {
 					clearInterval(ival);
 					ival = null;
 				}
+				/*
+					这里有个逻辑技巧
+					var v = a&&b || c&&d;        
+					如果a真,b真，返回b
+					如果a真,b假，c真，返回d
+					如果a真,b假，c假，返回c
+					如果a假,b假，返回a
 
+				*/
 				status = isTimeout == "timeout" && "timeout" ||
 					!jQuery.httpSuccess( xhr ) && "error" ||
 					s.ifModified && jQuery.httpNotModified( xhr, s.url ) && "notmodified" ||
@@ -3138,6 +3158,7 @@ jQuery.extend({
 					// Watch for, and catch, XML document parse errors
 					try {
 						// process the data (runs the xml through httpData regardless of callback)
+						
 						data = jQuery.httpData( xhr, s.dataType, s.dataFilter );
 					} catch(e) {
 						status = "parsererror";
@@ -3170,18 +3191,21 @@ jQuery.extend({
 			}
 		};
 
-		if ( s.async ) {
+		if ( s.async ) {//是否异步 默认为true
 			// don't attach the handler to the request, just poll it instead
 			var ival = setInterval(onreadystatechange, 13);
 
-			// Timeout checker
-			if ( s.timeout > 0 )
+			// Timeout checker 是否超时检查
+			if ( s.timeout > 0 ) //如果配置参数timeout大于0(默认为0)
+
+				//间隔超时时间(毫秒)，然后检查
 				setTimeout(function(){
 					// Check to see if the request is still happening
 					if ( xhr ) {
 						// Cancel the request
 						xhr.abort();
 
+						//如果请求没有完成，发出超时的信号	
 						if( !requestDone )
 							onreadystatechange( "timeout" );
 					}
@@ -3189,13 +3213,16 @@ jQuery.extend({
 		}
 
 		// Send the data
+		// 发送数据
 		try {
 			xhr.send(s.data);
 		} catch(e) {
+			//处理错误
 			jQuery.handleError(s, xhr, null, e);
 		}
 
-		// firefox 1.5 doesn't fire statechange for sync requests
+		// firefox 1.5 doesn't fire statechange for sync requests   
+		// firefox 1.5 同步请求的时候不触发statechange ，所以要手动触发  
 		if ( !s.async )
 			onreadystatechange();
 
@@ -3204,17 +3231,17 @@ jQuery.extend({
 			if ( s.success )
 				s.success( data, status );
 
-			// Fire the global callback
+			// Fire the global callback 触发全局回调
 			if ( s.global )
 				jQuery.event.trigger( "ajaxSuccess", [xhr, s] );
 		}
 
 		function complete(){
 			// Process result
-			if ( s.complete )
+			if ( s.complete )  //用户配置的complete方法
 				s.complete(xhr, status);
 
-			// The request was completed
+			// The request was completed 触发全局回调
 			if ( s.global )
 				jQuery.event.trigger( "ajaxComplete", [xhr, s] );
 
@@ -3229,9 +3256,9 @@ jQuery.extend({
 
 	handleError: function( s, xhr, status, e ) {
 		// If a local callback was specified, fire it
-		if ( s.error ) s.error( xhr, status, e );
+		if ( s.error ) s.error( xhr, status, e );//用户配置的error方法
 
-		// Fire the global callback
+		// Fire the global callback 触发全局
 		if ( s.global )
 			jQuery.event.trigger( "ajaxError", [xhr, s, e] );
 	},
@@ -3244,6 +3271,14 @@ jQuery.extend({
 	httpSuccess: function( xhr ) {
 		try {
 			// IE error sometimes returns 1223 when it should be 204 so treat it as success, see #1450
+			/*
+			返回为真：
+			 1 xhr.status为假 同时 表示是本地运行的时候
+			 2 xhr.status 在【200,300)间
+			 3 304 没有变化
+			 4 ie中xhr.status有时候在本应该是204的时候，有时候可能会返回1223
+			 5 是safari浏览器， xhr.status 为undefined
+			*/
 			return !xhr.status && location.protocol == "file:" ||
 				( xhr.status >= 200 && xhr.status < 300 ) || xhr.status == 304 || xhr.status == 1223 ||
 				jQuery.browser.safari && xhr.status == undefined;
@@ -3252,8 +3287,10 @@ jQuery.extend({
 	},
 
 	// Determines if an XMLHttpRequest returns NotModified
+	// 判断是否一个xhr的response是否是没有修改过的(http status 304)
 	httpNotModified: function( xhr, url ) {
 		try {
+			//得到返回头的’Last-Modified‘
 			var xhrRes = xhr.getResponseHeader("Last-Modified");
 
 			// Firefox always returns 200. check Last-Modified date
@@ -3265,18 +3302,24 @@ jQuery.extend({
 
 	httpData: function( xhr, type, filter ) {
 		var ct = xhr.getResponseHeader("content-type"),
+			/*
+			type是否为xmpl
+			1 指定type为xml
+			2 type为假，同时ct为真，且包含xml字符串
+			*/
 			xml = type == "xml" || !type && ct && ct.indexOf("xml") >= 0,
+			//如果为xml返回responseXML，否则返回responseText
 			data = xml ? xhr.responseXML : xhr.responseText;
 
-		console.log(data);	
+		//console.log(data);	
 		if ( xml && data.documentElement.tagName == "parsererror" )
 			throw "parsererror";
 
 		// Allow a pre-filtering function to sanitize the response
-		if( filter )
+		if( filter )//过滤器
 			data = filter( data, type );
 
-		console.log(data);
+		//console.log(data);
 		// If the type is "script", eval it in global context
 		if ( type == "script" )
 			jQuery.globalEval( data );
@@ -3325,6 +3368,8 @@ jQuery.extend({
 	}
 
 });
+
+//拓展实例方法  动画
 jQuery.fn.extend({
 	show: function(speed,callback){
 		return speed ?
