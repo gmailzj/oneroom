@@ -26,7 +26,7 @@ var jQuery = window.jQuery = window.$ = function( selector, context ) {
 var quickExpr = /^[^<]*(<(.|\s)+>)[^>]*$|^#(\w+)$/,
 
 // Is it a simple selector
-	isSimple = /^.[^:#\[\.]*$/,
+	isSimple = /^.[^:#\[\.]*$/,//简单的选择器 没有 :（伪类）#(id) []{过滤器) .(className)
 
 // Will speed up references to undefined, and allows munging its name.
 	undefined;
