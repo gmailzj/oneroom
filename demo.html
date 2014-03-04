@@ -2,12 +2,64 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<title>base函数库</title>
-<script type="text/javascript" src="kk.js"></script>
+<title>源码分析</title>
+<link rel="stylesheet" href="channel.css?date=2014011601" type="text/css" media="screen" />
+
+<script type="text/javascript" src="jquery-1.2.6.js"></script>
 
 </head>
 <body>
+<div id="OSC_NavTop">
+	<div class="wp998">
+        <div id="OSC_Channels">
+        	<ul>
+        	<li class="item"><a href="http://www.oschina.net/" class="home">首页</a></li>        	<li class="item control_select"><a href="http://www.oschina.net/project" class="project">开源项目</a>
+				
+			</li>
+        	<li class="item control_select">
+				<a href="http://www.oschina.net/question" class="question">讨论区</a>				
+				
+			</li>
+        	<li class="item"><a href="http://www.oschina.net/code/list" class="code">代码</a></li>
+        	        	<li class="item"><a href="http://www.oschina.net/blog" class="blog">博客</a></li>
+        	<li class="item"><a href="http://www.oschina.net/translate" class="tran">翻译</a></li>
+            <li class="item"><a href="http://www.oschina.net/news" class="news">资讯</a></li>
+        	<li class="item control_select">
+				<a href="http://www.oschina.net/android" class="mobile">移动开发</a>
+				
+			</li>
+        	<li class="item t_job"><a href="http://www.oschina.net/job" class="job">招聘</a></li>
+									            <li class="item control_select">
+                <a href="http://city.oschina.net/" id="MyCities" title="城市圈">城市圈</a>
+							</li>
+        	</ul>
+        </div>
+		<div id="OSC_Userbar">
+                		    		当前访客身份：游客 [ <a href="http://www.oschina.net/home/login?goto_page=http%3A%2F%2Fwww.oschina.net%2Fp%2Farttemplate">登录</a> | <a href="http://www.oschina.net/home/reg">加入开源中国</a> ]
+    				</div>
+		<div class="clear"></div>
+		<div></div>
+	</div>
+</div>
 <script>
+var data = [2];
+var elem = $('#OSC_NavTop');
+
+elem = $("*:empty");
+console.log(elem)
+/*没有参数
+elem.each(function(i,v){
+	console.log(i,v);
+
+})
+*/
+
+/*data是数组的时候，其值和回调的形参对应统一
+elem.each(function(i,v){
+	console.log(i,v);
+}, data)
+*/
+
 
 </script>
  

@@ -23,6 +23,7 @@ var jQuery = window.jQuery = window.$ = function( selector, context ) {
 
 // A simple way to check for HTML strings or ID strings
 // (both of which we optimize for)
+//$('#id')
 var quickExpr = /^[^<]*(<(.|\s)+>)[^>]*$|^#(\w+)$/,
 
 // Is it a simple selector
@@ -197,6 +198,7 @@ jQuery.fn = jQuery.prototype = {
 		//忽略不合法的宽度和高度的赋值操作
 		if ( (key == 'width' || key == 'height') && parseFloat(value) < 0 )
 			value = undefined;//value == undefined的时候，attr函数就只会取值，不会赋值
+		//间接调用attr方法
 		return this.attr( key, value, "curCSS" );//真正执行。第3个参数比较关键
 	},
 
@@ -846,10 +848,31 @@ jQuery.extend({
 	},
 
 	// args is for internal usage only
+
+	//each的调用形式
+	/*没有参数
+	elem.each(function(i,v){
+		//i对应key
+		//v对应dom的item，等于这个作用域的this  因为下面的语句是 callback.call( value, i, value )
+		console.log(i,v);
+
+	})
+	*/
+
+	/*data是数组的时候，其值和回调的形参对应统一
+	elem.each(function(i,v){
+		console.log(i,v);
+	}, data)
+	*/
+
+
 	each: function( object, callback, args ) {//静态方法
 		var name, i = 0, length = object.length;
 
-		if ( args ) {//如果args为真
+		//i的作用：如果有length属性就用length(最大值)来遍历，否则就用for in 来遍历
+
+		//如果args为真,是通过apply的方式来调用，这个时候如果args是合法的数组才会有传递参数给回调callback
+		if ( args ) {
 			if ( length == undefined ) {
 				for ( name in object )
 					if ( callback.apply( object[ name ], args ) === false )
@@ -860,12 +883,13 @@ jQuery.extend({
 						break;
 
 		// A special, fast, case for the most common use of each
+		//我们经常是用到下面的逻辑
 		} else {
 			if ( length == undefined ) {//如果object没有length
 				for ( name in object )//通过in循环调用回调
 					if ( callback.call( object[ name ], name, object[ name ] ) === false )//如果集合其中一个对象调用回调后有返回false，退出循环
 						break;
-			} else //如果有length属性
+			} else //如果有length属性  object是数组或者jquery对象
 				for ( var value = object[0];
 				//这里有一个用法注意:object[i] ，object.get[i]等价(转换为dom)；callback中this会用value代替
 				//callback中参数形式 function(i,value){},如果回调返回true，相当于continue，返回false相当于break,因为
@@ -1481,11 +1505,12 @@ jQuery.each({
 		}
 	},
 
-	empty: function() {
+	empty: function() {//实例方法
 		// Remove element nodes and prevent memory leaks
 		//父元素下匹配所有的子元素
 		debugger
 		//这里的this指的是dom对象，因为jquery的each遍历的时候回调里面的fn的this对应匹配的集合其中一个的dom
+		//上面的几个方法里面的this也是一样的，这是因为下面的真正拓展实例方法的时候用做了each的回调导致的
 		jQuery( ">*", this ).remove();
 
 		// Remove any remaining nodes
@@ -1565,7 +1590,7 @@ jQuery.extend({
 
 			// Parent Checks
 			parent: function(a){return a.firstChild;},
-			empty: function(a){return !a.firstChild;},//内容选择器中用到
+			empty: function(a){return !a.firstChild;},//内容选择器中用到，匹配所有不包含子元素或者文本的空元素
 
 			// Text Check
 			contains: function(a,i,m){return (a.textContent||a.innerText||jQuery(a).text()||"").indexOf(m[3])>=0;},

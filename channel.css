@@ -1,0 +1,113 @@
+/* 全局 */
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+}
+
+body,table,input,textarea,select,button {
+	font-family: 微软雅黑, Verdana, sans-serif, 宋体;
+}
+
+a {
+	color: #3E62A6;
+	outline: 0;
+}
+
+a:hover {
+	color: #C00;
+}
+
+ul,ol {
+	list-style-type: none;
+}
+
+img {
+	border: 0;
+}
+
+body {
+	background: #fff;
+	text-align: center;
+	font-size: 10pt;
+}
+
+.clear {
+	clear: both;
+	font-size: 1px;
+	line-height: 0;
+}
+
+.error_msg {
+	color: #c00;
+}
+
+.ok_msg {
+	color: #40AA53;
+}
+
+.wp998 {
+	width: 998px;
+	margin: 0 auto;
+}
+
+#OSC_Screen {
+	width: 998px;
+	margin: 0 auto;
+	text-align: left;
+	margin-bottom: 50px;
+}
+
+#OSC_NavTop {
+	font-size: 10pt;
+	height: 30px;
+	line-height: 30px;
+	background-color: #15a230;
+	min-width: 998px;
+}
+
+#OSC_NavTop a {
+	text-decoration: none;
+	color: #fff;
+}
+
+#OSC_NavTop .cs_content a {
+	color: #080;
+}
+
+#OSC_NavTop a:hover {
+	color: #eee;
+}
+
+#OSC_NavTop #OSC_Channels {
+	float: left;
+}
+
+#OSC_NavTop #OSC_Channels ul {
+	line-height: 18px;
+}
+
+#OSC_NavTop #OSC_Channels ul li.item {
+	float: left;
+	margin: 0 16px 0 0;
+	line-height: 30px;
+}
+
+#OSC_NavTop #OSC_Channels ul li a.hl {
+	font-weight: bold;
+}
+
+#OSC_NavTop #OSC_Userbar {
+	float: right;
+	color: #ddd;
+}
+
+#OSC_NavTop #OSC_Userbar em {
+	font-style: normal;
+	color: #fff;
+	margin-right: 2px;
+}
