@@ -60,7 +60,19 @@ elem.each(function(i,v){
 }, data)
 */
 
-
+var $bind = function (fn, context) {
+    var slice = Array.prototype.slice, args = slice.call(arguments, 2);
+    return function () {
+    	//console.log(arguments);
+        return fn.apply(context, args.concat(slice.call(arguments)));
+    }
+}
+var handler = function (x, y, z) {
+    console.log(x, y, z);
+}
+var argh = $bind(handler, undefined, 5, 10);
+//console.log(argh)
+$('#OSC_NavTop').bind('click', argh);
 </script>
  
 </body>

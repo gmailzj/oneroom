@@ -823,6 +823,9 @@ jQuery.extend({
 				// If we've removed all the data, remove the element's cache
 				name = "";
 
+				//下面的代码的意思是，如果当前你删除的是最后一个key的时候，执行全部删除，即删掉elem[ expando ]，
+				//取一个element的name，如果没有，说明全部删除了，这个时候执行
+				//全部删除	
 				for ( name in jQuery.cache[ id ] )
 					break;
 
@@ -831,18 +834,22 @@ jQuery.extend({
 			}
 
 		// Otherwise, we want to remove all of the element's data
+		//删除elem的全部data
 		} else {
 			// Clean up the element expando
+			//删除属性
 			try {
-				delete elem[ expando ];
+				delete elem[ expando ]; 
 			} catch(e){
 				// IE has trouble directly removing the expando
 				// but it's ok with using removeAttribute
+				// IE浏览器需要用removeAttribute来删除元素的属性
 				if ( elem.removeAttribute )
 					elem.removeAttribute( expando );
 			}
 
 			// Completely remove the data cache
+			//同时真正的删除数据
 			delete jQuery.cache[ id ];
 		}
 	},
