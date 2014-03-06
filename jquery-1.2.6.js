@@ -166,11 +166,14 @@ jQuery.fn = jQuery.prototype = {
 		, this );
 	},
 
-	attr: function( name, value, type ) {
-		var options = name;
+	attr: function( name, value, type ) {//实例方法
+		var options = name;//赋初始值，后面的for循环要用到
+		//比如这种调用形式的时候  $("img").attr({ src: "test.jpg", alt: "Test Image" });
+
+
 
 		// Look for the case where we're accessing a style value
-		if ( name.constructor == String )//字符串
+		if ( name.constructor == String )//字符串,如果没有传递参数，这里会出错
 			if ( value === undefined )//取值一般取第1个元素,退出函数
 				// return  a && b 的用法：  1, a真 返回b  2，a假，返回a
  				return this[0] && jQuery[ type || "attr" ]( this[0], name );//返回第1个元素的属性；中括号用法，相当于.attr，jQuery静态方法
@@ -179,11 +182,13 @@ jQuery.fn = jQuery.prototype = {
 				options = {};
 				options[ name ] = value;
 			}
+
+
 		//下面是赋值操作	
 		// Check to see if we're setting style values
 		return this.each(function(i){//赋值的时候一般可以多个，通过each
 			// Set all the styles
-			for ( name in options )
+			for ( name in options )//可能有多个属性要设置，attr({ src: "test.jpg", alt: "Test Image" })
 				jQuery.attr(
 					type ?
 						this.style :
@@ -723,6 +728,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 //闭包 now() = return +new Date;
 var expando = "jQuery" + now(), uuid = 0, windowData = {},
 	// exclude the following css properties to add px
+	//除了下面的css属性值都要加 'px',也就是在数字后面加'px'字符串
 	exclude = /z-?index|font-?weight|opacity|zoom|line-?height/i,
 	// cache defaultView
 	defaultView = document.defaultView || {};
@@ -909,11 +915,12 @@ jQuery.extend({
 
 	prop: function( elem, value, type, i, name ) {//一般返回数值
 		// Handle executable functions
-		if ( jQuery.isFunction( value ) )//如果value是函数，执行函数的结果赋值给value
+		if ( jQuery.isFunction( value ) )//如果value是函数，i当做参数 ,函数执行的结果赋值给value
 			value = value.call( elem, i );
 
 		// Handle passing in a number to a CSS property
 		//exclude = z-?index|font-?weight|opacity|zoom|line-?height
+		//如果value为真(不只是bool的true，而是广义上的逻辑上的真)且是数字且是设置css且不在eclcude匹配中
 		return value && value.constructor == Number && type == "curCSS" && !exclude.test( name ) ?
 			value + "px" :
 			value;
@@ -935,9 +942,14 @@ jQuery.extend({
 			if (elem.nodeType == 1)
 				//classNames参数为空，则删除所有class
 				//否则，elem的className如果不含有classNames，就push到临时数组，最后用“ ”来join这个数组
+
+				/*
+				使用过滤函数jQuery.grep过滤数组元素。
+				此函数至少传递两个参数：待过滤数组和过滤函数。过滤函数必须返回 true 以保留元素或 false 以删除元素。
+				*/
 				elem.className = classNames != undefined ?
 					jQuery.grep(elem.className.split(/\s+/), function(className){
-						return !jQuery.className.has( classNames, className );
+						return !jQuery.className.has( classNames, className );//参数className为数组的一项值
 					}).join(" ") :
 					"";
 		},
@@ -1488,6 +1500,7 @@ jQuery.each({
 			this.removeAttribute( name );//删除
 	},
 
+	//调用jQuery.className.add静态方法
 	addClass: function( classNames ) {
 		jQuery.className.add( this, classNames );
 	},
