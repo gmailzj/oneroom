@@ -307,7 +307,11 @@ document.writeln(-d2);//NaN
 3.如果一个操作数是对象、数值或者布尔值，则调用toString()方法取得字符串值，然后再应用前面的字符串规则。对于undefined和null，分别调用String()显式转换为字符串。
 可以看出，加法运算中，如果有一个操作值为字符串类型，则将另一个操作值转换为字符串，最后连接起来。
 
-
+利用运算符“+”这个特性，可以很方便的将Number转换成String
+var a = 11;
+alert(typeof a); //-->number
+a = a + '';
+alert(typeof a); //-->string
 */
 
 
@@ -317,7 +321,10 @@ document.writeln(-d2);//NaN
 
 这些操作符针对的是运算，所以他们具有共同性：如果操作值之一不是数值，则被隐式调用Number()函数进行转换。具体每一种运算的详细规则请参考ECMAScript中的定义。
 
-
+可以很方便的将String转换成Number
+var a = '11';
+a = a - '';
+alert(typeof a);// -->number
 */
 
 
