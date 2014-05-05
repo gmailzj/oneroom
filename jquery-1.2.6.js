@@ -758,7 +758,7 @@ jQuery.extend({
 	},
 
 	// Evalulates a script in a global context
-	globalEval: function( data ) {//ok
+	globalEval: function( data ) {//以文本在全局环境执行脚本
 		data = jQuery.trim( data );
 
 		if ( data ) {
@@ -913,7 +913,7 @@ jQuery.extend({
 		return object;//链式调用
 	},
 
-	prop: function( elem, value, type, i, name ) {//一般返回数值
+	prop: function( elem, value, type, i, name ) {//一般返回数值 静态方法
 		// Handle executable functions
 		if ( jQuery.isFunction( value ) )//如果value是函数，i当做参数 ,函数执行的结果赋值给value
 			value = value.call( elem, i );
@@ -970,7 +970,7 @@ jQuery.extend({
 			elem.style[ name ] = options[ name ];
 		}
 
-		callback.call( elem );//回调
+		callback.call( elem );//执行回调
 
 		// Revert the old values
 		for ( var name in options )//重新恢复原来的属性
@@ -979,6 +979,7 @@ jQuery.extend({
 
 	css: function( elem, name, force ) {
 		if ( name == "width" || name == "height" ) {
+			//props 设置默认属性 用来显示元素和占位，计算其高度和宽度和其他样式属性
 			var val, props = { position: "absolute", visibility: "hidden", display:"block" }, which = name == "width" ? [ "Left", "Right" ] : [ "Top", "Bottom" ];
 
 			function getWH() {
@@ -988,13 +989,13 @@ jQuery.extend({
 					padding += parseFloat(jQuery.curCSS( elem, "padding" + this, true)) || 0;
 					border += parseFloat(jQuery.curCSS( elem, "border" + this + "Width", true)) || 0;
 				});
-				val -= Math.round(padding + border);
+				val -= Math.round(padding + border);//减掉border和padding宽度
 			}
 
 			if ( jQuery(elem).is(":visible") )
 				getWH();
-			else
-				jQuery.swap( elem, props, getWH );
+			else//如果是隐藏的，通过默认css属性值恢复其占位，来计算其值
+				jQuery.swap( elem, props, getWH );////先执行上面的默认值来
 
 			return Math.max(0, val);
 		}
@@ -1010,6 +1011,7 @@ jQuery.extend({
 			if ( !jQuery.browser.safari )
 				return false;
 
+			//defaultView = document.defaultView 
 			// defaultView is cached
 			var ret = defaultView.getComputedStyle( elem, null );
 			return !ret || ret.getPropertyValue("color") == "";
