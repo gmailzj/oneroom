@@ -68,6 +68,43 @@ window.onerror = function(){
     return true;
     
 }
+//内部函数
+function isType(type) {
+  return function(obj) {
+    return {}.toString.call(obj) == "[object " + type + "]";
+  }
+}
+
+var isObject = isType("Object");
+var isString = isType("String");
+var isArray = Array.isArray || isType("Array");
+var isFunction = isType("Function");
+var Cookie = kkTool.Cookie;
+
+//截断字符串，取n个字符
+function cutString(string,n){
+	string = string +'';
+	var r = /[^\x00-\xff]/g;
+	if(string.replace(r, "mm").length <= n) return string;   //一个中文=="mm"，即2个字符
+	var m = Math.floor(n/2);
+	for(var i=m; i<string.length; i++) {
+		if(string.substr(0, i).replace(r, "mm").length>=n) {		
+		return string.substr(0, i);
+		}
+	}
+	return string;
+};
+
+function obj2param(obj){
+	if( !isObject(obj) ){
+		return;
+	}
+	var param = "";
+	for(var key in obj){		
+		param += key + "=" + encodeURIComponent(obj[key]) +"&";
+	}
+	return param.substring(0,param.length-1);
+}
 
 /*
  *
