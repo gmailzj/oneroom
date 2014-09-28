@@ -221,6 +221,41 @@ function MyRound(n,precision){
     n = Math.round(n*Math.pow(10,precision))/Math.pow(10,precision);  
     return n; 
 }
+
+/*ajax 获取httpStatus 状态值*/
+/*
+$.ajax({
+    type: 'HEAD', // 获取头信息，type=HEAD即可
+    url : 'url',
+    complete: function( xhr,data ){
+        // 获取相关Http Response header
+        var wpoInfo = {
+            // 服务器端时间
+            "date" : xhr.getResponseHeader('Date'),
+            // 如果开启了gzip，会返回这个东西
+            "contentEncoding" : xhr.getResponseHeader('Content-Encoding'),
+            // keep-alive ？ close？
+            "connection" : xhr.getResponseHeader('Connection'),
+            // 响应长度
+            "contentLength" : xhr.getResponseHeader('Content-Length'),
+            // 服务器类型，apache？lighttpd？
+            "server" : xhr.getResponseHeader('Server'),
+            "vary" : xhr.getResponseHeader('Vary'),
+            "transferEncoding" : xhr.getResponseHeader('Transfer-Encoding'),
+            // text/html ? text/xml?
+            "contentType" : xhr.getResponseHeader('Content-Type'),
+            "cacheControl" : xhr.getResponseHeader('Cache-Control'),
+            // 生命周期？
+            "exprires" : xhr.getResponseHeader('Exprires'),
+            "lastModified" : xhr.getResponseHeader('Last-Modified')
+        };
+        // 在这里，做想做的事。。。
+        console.log(xhr.status)
+    }
+});
+
+*/
+
 /** 
  * 对日期进行格式化， 
  * @param date 要格式化的日期 
